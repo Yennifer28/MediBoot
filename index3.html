@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Asistente de Medicamentos</title>
+  <style>
+    /* Variables de color */
+    :root {
+      --color-bg: #eaf4f6; /* Fondo más claro */
+      --color-menu: #7ec4cf; /* Verde */
+      --color-hover: #bd64f4; /* Tono morado para hover */
+      --color-barra: #5dc2f4e1; /* Azul más claro */
+      --text-color-light: #ffffff; /* Texto blanco */
+      --text-color-dark: #000000; /* Texto negro */
+      --text-color-secondary: #333333; /* Texto gris oscuro */
+      --text-color-green: #5abf8e; /* Verde más intenso */
+      --color-consulta: #cce7ef; /* Azul suave para las consultas */
+    }
+
+    /* Estilos generales */
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--color-bg);
+      color: var(--text-color-dark);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Barra de navegación */
+    .navbar {
+      display: flex;
+      justify-content: space-between; /* Espacio entre el título y el menú */
+      align-items: center;
+      background-color: var(--color-menu);
+      padding: 15px 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .navbar h1 {
+      color: var(--text-color-light);
+      margin: 0;
+      font-size: 1.8em;
+      font-weight: bold;
+    }
+
+    .menu {
+      display: flex;
+      gap: 15px; /* Espacio entre los elementos del menú */
+    }
+
+    .menu-item {
+      padding: 10px 15px;
+      border-radius: 20px; /* Bordes redondeados */
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s;
+      color: var(--text-color-light);
+      font-weight: bold;
+      text-align: center; /* Centramos el texto */
+      background-color: transparent; /* Sin fondo azul */
+    }
+
+    .menu-item:hover {
+      background-color: var(--color-hover);
+    }
+
+    /* Contenedor principal */
+    .container {
+      display: flex;
+      flex: 1;
+      padding: 20px;
+      max-width: 1200px; /* Ancho máximo para la vista */
+      margin: auto; /* Centrar el contenedor */
+      gap: 20px; /* Espacio entre historial y sección principal */
+    }
+
+    /* Historial de consultas */
+    .historial {
+      background-color: var(--color-barra);
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      overflow-y: auto;
+      width: 300px; /* Ancho del historial */
+      height: calc(100vh - 140px); /* Altura para que se ajuste */
+      margin: 0; /* Sin margen */
+      position: fixed; /* Para que esté fijo en el lado izquierdo */
+      left: 120px; /* Ajustado para un margen de 120px desde el borde izquierdo */
+      top: 80px; /* Alineado debajo de la barra de navegación */
+    }
+
+    .historial h3 {
+      color: var(--text-color-dark); /* Letras en negro */
+      font-size: 1.5em;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+
+    .consulta {
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s;
+      background-color: var(--color-consulta); /* Azul suave */
+      color: var(--text-color-dark);
+    }
+
+    .consulta:hover {
+      background-color: var(--color-hover);
+      color: var(--text-color-light);
+    }
+
+    /* Sección Principal */
+    .main {
+      flex: 1;
+      padding: 20px;
+      background-color: white; /* Fondo blanco para la sección principal */
+      border-radius: 10px; /* Bordes redondeados */
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      margin-left: 340px; /* Ajustado para dejar espacio para el historial */
+      position: relative; /* Para posicionar la barra de mensajes */
+    }
+
+    .main h2 {
+      color: var(--color-menu);
+      font-size: 2em;
+      margin-bottom: 10px;
+    }
+
+    .main p {
+      color: var(--text-color-secondary);
+      font-size: 1.1em;
+      line-height: 1.6;
+      max-width: 800px;
+    }
+
+    /* Barra de mensajes dentro de la tarjeta */
+    .barra-mensajes {
+      display: flex;
+      align-items: center;
+      padding: 12px 20px;
+      background-color: var(--color-menu);
+      border-radius: 30px; /* Esquinas redondeadas */
+      position: absolute; /* Posición absoluta */
+      bottom: 20px; /* Pegado a la parte inferior */
+      left: 20px; /* Ajustado a la izquierda */
+      right: 20px; /* Ajustado a la derecha */
+    }
+
+    .input-mensaje {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 30px; /* Esquinas redondeadas */
+      font-size: 1em;
+      background-color: white;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.3s;
+    }
+
+    .input-mensaje:hover {
+      background-color: rgba(106, 27, 154, 0.1); /* Efecto al pasar el cursor */
+    }
+
+    .icono-microfono {
+      margin-left: 10px;
+      cursor: pointer;
+    }
+
+    .icono-microfono img {
+      width: 28px;
+      height: 28px;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Barra de navegación -->
+  <div class="navbar">
+    <h1>Asistente</h1>
+    <div class="menu">
+      <div class="menu-item">Consulta</div>
+      <div class="menu-item">Recordatorio</div>
+      <div class="menu-item">Síntomas</div>
+      <div class="menu-item">Soporte</div>
+    </div>
+  </div>
+
+  <!-- Contenedor principal -->
+  <div class="container">
+
+    <!-- Historial de consultas -->
+    <div class="historial">
+      <h3>Historial de Consultas</h3>
+      <div class="consulta">Consulta de medicamento A</div>
+      <div class="consulta">Consulta de medicamento B</div>
+      <div class="consulta">Consulta de medicamento C</div>
+      <div class="consulta">Consulta de medicamento D</div>
+      <div class="consulta">Consulta de medicamento E</div>
+      <!-- Más consultas -->
+    </div>
+
+    <!-- Sección Principal -->
+    <div class="main">
+      <h2>Bienvenido a tu Asistente de Medicamentos</h2>
+      <p>Consulta información detallada sobre medicamentos, programa recordatorios y mantente informado para un mejor cuidado de tu salud.</p>
+      
+      <!-- Barra de mensajes dentro de la tarjeta -->
+      <div class="barra-mensajes">
+        <input type="text" class="input-mensaje" placeholder="Escribe tu mensaje aquí...">
+        <div class="icono-microfono">
+          <img src="https://www.svgrepo.com/show/217771/microphone.svg" alt="Micrófono">
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
