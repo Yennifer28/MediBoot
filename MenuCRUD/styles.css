@@ -1,0 +1,167 @@
+:root {
+    --color-primary: #7ec4cf;
+    --color-secondary: #9cadce;
+    --color-tertiary: #d1cfe2;
+    --color-accent: #daeaF6;
+    --color-background: #f0f4f8;
+    --color-sidebar: #2a3b47;
+    --color-white: #ffffff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: var(--color-background);
+}
+
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    background-color: var(--color-sidebar);
+    color: var(--color-white);
+    position: fixed;
+    padding-top: 30px;
+}
+
+.sidebar h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    padding: 15px 20px;
+}
+
+.sidebar ul li a {
+    color: var(--color-white);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+
+.sidebar ul li a:hover {
+    background-color: var(--color-primary);
+    border-radius: 5px;
+}
+
+.sidebar ul li.active a {
+    background-color: var(--color-primary);
+    border-radius: 5px;
+}
+
+.content {
+    margin-left: 250px;
+    padding: 20px;
+}
+
+.content h1 {
+    color: var(--color-sidebar);
+}
+
+.table-container {
+    background-color: var(--color-white);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.table-container h3 {
+    color: var(--color-sidebar);
+    margin-bottom: 20px;
+}
+
+.crud-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.crud-table th, .crud-table td {
+    padding: 10px;
+    text-align: left;
+}
+
+.crud-table th {
+    background-color: var(--color-secondary);
+    color: var(--color-white);
+}
+
+.crud-table td {
+    border-bottom: 1px solid var(--color-tertiary);
+}
+
+.crud-table tr:hover {
+    background-color: var(--color-accent);
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.button-container button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: var(--color-white);
+}
+
+.add-button {
+    background-color: var(--color-primary);
+}
+
+.edit-button {
+    background-color: var(--color-secondary);
+}
+
+.delete-button {
+    background-color: #f44336; /* red for delete button */
+}
+
+/* Estilos para el formulario de edición */
+.edit-user-form {
+    background-color: var(--color-white);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+.edit-user-form label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.edit-user-form input, .edit-user-form select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid var(--color-tertiary);
+    border-radius: 5px;
+}
+
+.edit-user-form button {
+    background-color: var(--color-primary);
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: var(--color-white);
+}
+
+.edit-user-form button.cancel-button {
+    background-color: #f44336; /* red for cancel button */
+    margin-left: 10px;
+}

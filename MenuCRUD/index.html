@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedBot</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>MedBot</h2>
+    <ul>
+        <li class="active"><a href="#">Usuarios</a></li>
+        <li><a href="#">Medicamentos</a></li>
+    </ul>
+</div>
+
+<div class="content">
+    <h1>Panel de Administración - Usuarios</h1>
+    <div class="table-container">
+        <h3>Lista de Usuarios</h3>
+        <div class="button-container">
+            <button class="add-button">Añadir Nuevo</button>
+            <button class="delete-button">Eliminar Seleccionados</button>
+        </div>
+        <table class="crud-table">
+            <thead>
+                <tr>
+                    <th>Acción</th>
+                    <th>ID de Usuario</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Última Actualización</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr data-id="102">
+                    <td>
+                        <button class="edit-button">Editar</button>
+                        <button class="delete-button">Eliminar</button>
+                    </td>
+                    <td>8</td>
+                    <td>Juan</td>
+                    <td>Palizada</td>
+                    <td>07 Noviembre 2024</td>
+                </tr>
+                <!-- Más filas de ejemplo aquí -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Formulario de edición (oculto inicialmente) -->
+<div class="edit-user-form" style="display:none;">
+    <h3>Editar Usuario</h3>
+    <label for="edit-name">Nombre:</label>
+    <input type="text" id="edit-name">
+    <label for="edit-email">Email:</label>
+    <input type="email" id="edit-email">
+    <label for="edit-phone">Teléfono:</label>
+    <input type="text" id="edit-phone">
+    <label for="edit-notification">Preferencia de Notificación:</label>
+    <select id="edit-notification">
+        <option value="email">Email</option>
+        <option value="sms">SMS</option>
+        <option value="ambos">Ambos</option>
+    </select>
+    <button class="save-button">Guardar Cambios</button>
+    <button class="cancel-button">Cancelar</button>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>
