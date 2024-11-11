@@ -21,7 +21,7 @@
     <div class="table-container">
         <h3>Lista de Usuarios</h3>
         <div class="button-container">
-            <button class="add-button">Añadir Nuevo</button>
+            <button id="add-new-user-btn" class="add-button">Añadir Nuevo</button>
             <button class="delete-button">Eliminar Seleccionados</button>
         </div>
         <table class="crud-table">
@@ -30,22 +30,11 @@
                     <th>Acción</th>
                     <th>ID de Usuario</th>
                     <th>Nombre</th>
-                    <th>Apellido</th>
                     <th>Última Actualización</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr data-id="102">
-                    <td>
-                        <button class="edit-button">Editar</button>
-                        <button class="delete-button">Eliminar</button>
-                    </td>
-                    <td>8</td>
-                    <td>Juan</td>
-                    <td>Palizada</td>
-                    <td>07 Noviembre 2024</td>
-                </tr>
-                <!-- Más filas de ejemplo aquí -->
+            <tbody id="user-table-body">
+                <!-- Filas de usuarios generadas dinámicamente -->
             </tbody>
         </table>
     </div>
@@ -53,7 +42,7 @@
 
 <!-- Formulario de edición (oculto inicialmente) -->
 <div class="edit-user-form" style="display:none;">
-    <h3>Editar Usuario</h3>
+    <h3>Registrar Nuevo Usuario</h3>
     <label for="edit-name">Nombre:</label>
     <input type="text" id="edit-name">
     <label for="edit-email">Email:</label>
@@ -67,11 +56,11 @@
         <option value="ambos">Ambos</option>
     </select>
     <button class="save-button">Guardar Cambios</button>
-    <button class="cancel-button">Cancelar</button>
+    <button class="cancel-button" id="cancel-btn">Cancelar</button>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
 <script src="app.js"></script>
 
 </body>

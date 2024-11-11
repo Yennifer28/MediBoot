@@ -13,50 +13,64 @@ const firebaseConfig = {
 const app = firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// Función para agregar un usuario
-async function addUser(name, lastName, email, phone, notificationPreference) {
-    try {
-        const docRef = await db.collection("usuarios").add({
-            nombre: name,
-            apellido: lastName,
-            email: email,
-            telefono: phone,
-            preferencia_notificacion: notificationPreference,
-            creado_en: new Date(),
-            actualizado_en: new Date()
-        });
-        console.log("Usuario agregado con ID: ", docRef.id);
-        alert("Usuario agregado exitosamente!");
-    } catch (e) {
-        console.error("Error al agregar usuario: ", e);
-        alert("Hubo un error al agregar el usuario.");
-    }
+// Función para mostrar el formulario de registro de nuevo usuario
+function showAddUserForm() {
+    console.log("Mostrar formulario");
+    const form = document.querySelector('.edit-user-form');
+    form.style.display = "block"; // Mostrar el formulario
+}
+
+// Función para ocultar el formulario
+function hideAddUserForm() {
+    console.log("Ocultar formulario");
+    const form = document.querySelector('.edit-user-form');
+    form.style.display = "none"; // Ocultar el formulario
 }
 
 // Event listener para el botón de añadir usuario
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("DOMContentLoaded cargado.");
+    console.log("Document loaded");
+    const addButton = document.getElementById("add-new-user-btn");
 
-    const addButton = document.querySelector(".add-button");
     if (addButton) {
+        console.log("Botón encontrado");
         addButton.addEventListener("click", () => {
-            console.log("Botón de añadir presionado.");
-            
-            // Obtener los datos del nuevo usuario
-            const name = prompt("Ingrese el nombre del usuario:");
-            const lastName = prompt("Ingrese el apellido del usuario:");
-            const email = prompt("Ingrese el email del usuario:");
-            const phone = prompt("Ingrese el teléfono del usuario:");
-            const notificationPreference = prompt("Ingrese la preferencia de notificación (email/sms/ambos):");
-
-            // Verificar que se haya ingresado toda la información
-            if (name && lastName && email && phone && notificationPreference) {
-                addUser(name, lastName, email, phone, notificationPreference);
-            } else {
-                alert("Por favor, ingrese todos los datos.");
-            }
+            console.log("Botón 'Añadir Nuevo' clickeado");
+            showAddUserForm();
         });
-    } else {
-        console.log("No se encontró el botón de añadir.");
     }
+
+    const cancelButton = document.getElementById("cancel-btn");
+    if (cancelButton) {
+        console.log("Botón Cancelar encontrado");
+        cancelButton.addEventListener("click", () => {
+            console.log("Botón 'Cancelar' clickeado");
+            hideAddUserForm();
+        });
+    }
+
+    loadUsers(); // Cargar usuarios al inicio
 });
+
+// Función para cargar usuarios de Firebase
+async function loadUsers() {
+    const tableBody = document.getElementById("user-table-body");
+    const snapshot = await db.collection("usuarios").get();
+    snapshot.forEach((doc) => {
+        const user = doc.data();
+        const row = document.createElement("tr");
+        row.dataset.id = doc.id;
+        row.innerHTML = `
+            <td>
+                <button class="edit-button">Editar</button>
+                <button class="delete-button">Eliminar</button>
+            </td>
+            <td>${doc.id}</td>
+            <td>${user.nombre}</td>
+            <td>${user.actualizado_en.toDate().toLocaleDateString()}</td>
+        `;
+        tableBody.appendChild(row);
+
+        row.querySelector(".edit-button").addEventListener("click", () => showEditForm(doc.id, user));
+    });
+}
