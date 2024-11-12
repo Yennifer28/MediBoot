@@ -5,59 +5,73 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Administrador de Medicamentos</title>
   <style>
-    /* Variables de color */
     :root {
       --color-bg: #e0eef6;
       --color-text: #000000;
       --color-acento: #009eca;
+      --color-boton: #4caf50;
+      --color-borrar: #f44336;
+      --color-editar: #2196f3;
+      --color-tabla-header: #009eca;
+      --color-tabla-hover: #f1f1f1;
     }
 
-    /* Estilos generales */
     body {
       font-family: 'Arial', sans-serif;
       margin: 0;
-      padding: 0;
       background-color: var(--color-bg);
       color: var(--color-text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      margin: 20px;
+      color: var(--color-acento);
     }
 
     .container {
-      padding: 20px;
+      width: 90%;
+      max-width: 1200px;
     }
 
-    /* Botón de agregar en la parte superior derecha */
     .add-button {
       position: absolute;
       top: 20px;
       right: 20px;
-      padding: 10px;
+      padding: 10px 20px;
       background-color: var(--color-acento);
       border: none;
       color: white;
-      font-size: 1em;
       cursor: pointer;
       border-radius: 5px;
+      font-size: 1em;
     }
 
-    /* Tabla de medicamentos */
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 50px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      background-color: #ffffff;
     }
 
     th, td {
-      padding: 10px;
-      border: 1px solid #ddd;
+      padding: 12px;
       text-align: center;
+      border: 1px solid #ddd;
     }
 
     th {
-      background-color: var(--color-acento);
+      background-color: var(--color-tabla-header);
       color: white;
     }
 
-    /* Iconos */
+    tr:hover {
+      background-color: var(--color-tabla-hover);
+    }
+
     .icon-btn {
       background: none;
       border: none;
@@ -66,7 +80,10 @@
       margin: 0 5px;
     }
 
-    /* Modal */
+    .btn-view { color: var(--color-boton); }
+    .btn-edit { color: var(--color-editar); }
+    .btn-delete { color: var(--color-borrar); }
+
     .modal {
       display: none;
       position: fixed;
@@ -83,9 +100,10 @@
     .modal-content {
       background-color: #fff;
       padding: 20px;
-      border-radius: 5px;
-      width: 80%;
+      border-radius: 8px;
+      width: 90%;
       max-width: 500px;
+      text-align: left;
     }
 
     .close-btn {
@@ -93,15 +111,54 @@
       font-size: 1.5em;
       cursor: pointer;
     }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .form-group input, .form-group textarea {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    .form-buttons {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .form-buttons button {
+      padding: 10px 15px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      border-radius: 4px;
+    }
+
+    .form-buttons .save-btn {
+      background-color: var(--color-boton);
+      color: white;
+    }
+
+    .form-buttons .cancel-btn {
+      background-color: var(--color-borrar);
+      color: white;
+    }
   </style>
 </head>
 <body>
 
+  <h1>Administrador de Medicamentos</h1>
   <div class="container">
-    <!-- Botón de agregar medicamento -->
     <button class="add-button" onclick="openAddModal()">➕ Agregar Medicamento</button>
 
-    <!-- Tabla de medicamentos -->
     <table>
       <thead>
         <tr>
@@ -109,101 +166,156 @@
           <th>Descripción</th>
           <th>Dosis Recomendada</th>
           <th>Efectos Secundarios</th>
-          <th>Restricciones</th>
           <th>Síntomas</th>
-          <th>Creado En</th>
-          <th>Actualizado En</th>
+          <th>Restricciones</th>
           <th>Acciones</th>
         </tr>
       </thead>
       <tbody id="medicamentosTable">
-        <!-- Registros dinámicos -->
+        <!-- Filas generadas dinámicamente -->
       </tbody>
     </table>
   </div>
 
-  <!-- Modal para editar medicamento -->
-  <div class="modal" id="editModal">
+  <!-- Modal -->
+  <div class="modal" id="addModal">
     <div class="modal-content">
-      <span class="close-btn" onclick="closeEditModal()">✖</span>
-      <h3>Editar Medicamento</h3>
-      <form id="editForm">
-        <label>Nombre:</label><br>
-        <input type="text" id="editNombre"><br><br>
-        <label>Descripción:</label><br>
-        <input type="text" id="editDescripcion"><br><br>
-        <label>Dosis Recomendada:</label><br>
-        <input type="text" id="editDosis"><br><br>
-        <label>Efectos Secundarios:</label><br>
-        <input type="text" id="editEfectos"><br><br>
-        <label>Restricciones:</label><br>
-        <input type="text" id="editRestricciones"><br><br>
-        <label>Síntomas:</label><br>
-        <input type="text" id="editSintomas"><br><br>
-        <button type="button" onclick="saveEdit()">Guardar Cambios</button>
+      <span class="close-btn" onclick="closeAddModal()">✖</span>
+      <h3 id="modalTitle">Agregar Medicamento</h3>
+      <form id="addForm">
+        <div class="form-group">
+          <label>Nombre:</label>
+          <input type="text" id="addNombre" required>
+        </div>
+        <div class="form-group">
+          <label>Descripción:</label>
+          <textarea id="addDescripcion" required></textarea>
+        </div>
+        <div class="form-group">
+          <label>Dosis Recomendada:</label>
+          <input type="text" id="addDosis" required>
+        </div>
+        <div class="form-group">
+          <label>Efectos Secundarios:</label>
+          <textarea id="addEfectosSecundarios" required></textarea>
+        </div>
+        <div class="form-group">
+          <label>Síntomas:</label>
+          <textarea id="addSintomas" required></textarea>
+        </div>
+        <div class="form-group">
+          <label>Restricciones:</label>
+          <textarea id="addRestricciones" required></textarea>
+        </div>
+        <div class="form-buttons">
+          <button type="button" class="save-btn" onclick="registerMedicamento()">Guardar</button>
+          <button type="button" class="cancel-btn" onclick="closeAddModal()">Cancelar</button>
+        </div>
       </form>
     </div>
   </div>
 
+  <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore-compat.js"></script>
   <script>
-    // Simulación de datos para visualizar en la tabla
-    const medicamentos = [
-      { Nombre: "Ibuprofeno", Descripccion: "Antiinflamatorio", Dosis_Recomendada: "200mg", Efectos_Secundarios: "Náuseas", Restricciones: "No en embarazo", Sintomas: "Dolor", Creado_En: "2023-01-01", Actualizado_En: "2023-01-10" },
-      { Nombre: "Paracetamol", Descripccion: "Analgésico", Dosis_Recomendada: "500mg", Efectos_Secundarios: "Mareos", Restricciones: "No mezclar con alcohol", Sintomas: "Fiebre", Creado_En: "2023-01-05", Actualizado_En: "2023-01-15" }
-    ];
+    const firebaseConfig = {
+      apiKey: "API_KEY",
+      authDomain: "mediboot-d6d85.firebaseapp.com",
+      projectId: "mediboot-d6d85",
+      storageBucket: "mediboot-d6d85.appspot.com",
+      messagingSenderId: "636585030532",
+      appId: "1:636585030532:web:b0f30147a45d9c03a563d1",
+      measurementId: "G-WGGS5W549Z"
+    };
 
-    // Renderizar los datos en la tabla
-    function renderTable() {
-      const tableBody = document.getElementById("medicamentosTable");
-      tableBody.innerHTML = "";
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-      medicamentos.forEach((medicamento, index) => {
-        const row = `
+    const medicamentosTable = document.getElementById("medicamentosTable");
+    let editingId = null;
+
+    async function loadMedicamentos() {
+      medicamentosTable.innerHTML = "";
+      const snapshot = await db.collection("medicamento").get();
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        medicamentosTable.innerHTML += `
           <tr>
-            <td>${medicamento.Nombre}</td>
-            <td>${medicamento.Descripccion}</td>
-            <td>${medicamento.Dosis_Recomendada}</td>
-            <td>${medicamento.Efectos_Secundarios}</td>
-            <td>${medicamento.Restricciones}</td>
-            <td>${medicamento.Sintomas}</td>
-            <td>${medicamento.Creado_En}</td>
-            <td>${medicamento.Actualizado_En}</td>
+            <td>${data.Nombre}</td>
+            <td>${data.Descripcion}</td>
+            <td>${data.Dosis_recomendada}</td>
+            <td>${data.Efectos_Secundarios}</td>
+            <td>${data.Sintomas}</td>
+            <td>${data.Restricciones}</td>
             <td>
-              <button class="icon-btn" onclick="openEditModal(${index})">✏</button>
-              <button class="icon-btn" onclick="deleteMedicamento(${index})">🗑</button>
+              <button class="icon-btn btn-edit" onclick="editMedicamento('${doc.id}', '${data.Nombre}', '${data.Descripcion}', '${data.Dosis_recomendada}', '${data.Efectos_Secundarios}', '${data.Sintomas}', '${data.Restricciones}')">✏️</button>
+              <button class="icon-btn btn-delete" onclick="deleteMedicamento('${doc.id}')">🗑️</button>
             </td>
-          </tr>
-        `;
-        tableBody.innerHTML += row;
+          </tr>`;
       });
     }
 
-    // Función para abrir el modal de agregar medicamento
     function openAddModal() {
-      // Lógica para abrir el formulario de agregar
-      alert("Abrir formulario para agregar medicamento (en desarrollo)");
+      editingId = null;
+      document.getElementById("modalTitle").textContent = "Agregar Medicamento";
+      document.getElementById("addForm").reset();
+      document.getElementById("addModal").style.display = "flex";
     }
 
-    // Función para abrir el modal de edición
-    function openEditModal(index) {
-      const medicamento = medicamentos[index];
-      document.getElementById("editNombre").value = medicamento.Nombre;
-      document.getElementById("editDescripcion").value = medicamento.Descripccion;
-      document.getElementById("editDosis").value = medicamento.Dosis_Recomendada;
-      document.getElementById("editEfectos").value = medicamento.Efectos_Secundarios;
-      document.getElementById("editRestricciones").value = medicamento.Restricciones;
-      document.getElementById("editSintomas").value = medicamento.Sintomas;
-      document.getElementById("editModal").style.display = "flex";
+    function closeAddModal() {
+      document.getElementById("addModal").style.display = "none";
     }
 
-    // Función para cerrar el modal de edición
-    function closeEditModal() {
-      document.getElementById("editModal").style.display = "none";
+    function editMedicamento(id, nombre, descripcion, dosis, efectos, sintomas, restricciones) {
+      editingId = id;
+      document.getElementById("modalTitle").textContent = "Editar Medicamento";
+      document.getElementById("addNombre").value = nombre;
+      document.getElementById("addDescripcion").value = descripcion;
+      document.getElementById("addDosis").value = dosis;
+      document.getElementById("addEfectosSecundarios").value = efectos;
+      document.getElementById("addSintomas").value = sintomas;
+      document.getElementById("addRestricciones").value = restricciones;
+      document.getElementById("addModal").style.display = "flex";
     }
 
+    async function registerMedicamento() {
+      const nombre = document.getElementById("addNombre").value;
+      const descripcion = document.getElementById("addDescripcion").value;
+      const dosis = document.getElementById("addDosis").value;
+      const efectos = document.getElementById("addEfectosSecundarios").value;
+      const sintomas = document.getElementById("addSintomas").value;
+      const restricciones = document.getElementById("addRestricciones").value;
 
-    // Renderizar la tabla al cargar la página
-    renderTable();
+      if (editingId) {
+        await db.collection("medicamento").doc(editingId).update({
+          Nombre: nombre,
+          Descripcion: descripcion,
+          Dosis_Recomendada: dosis,
+          Efectos_Secundarios: efectos,
+          Sintomas: sintomas,
+          Restricciones: restricciones
+        });
+      } else {
+        await db.collection("medicamento").add({
+          Nombre: nombre,
+          Descripcion: descripcion,
+          Dosis_Recomendada: dosis,
+          Efectos_Secundarios: efectos,
+          Sintomas: sintomas,
+          Restricciones: restricciones
+        });
+      }
+
+      loadMedicamentos();
+      closeAddModal();
+    }
+
+    async function deleteMedicamento(id) {
+      await db.collection("medicamento").doc(id).delete();
+      loadMedicamentos();
+    }
+
+    loadMedicamentos();
   </script>
 </body>
 </html>
