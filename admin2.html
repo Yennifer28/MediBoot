@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administrador de Medicamentos</title>
+  <style>
+    :root {
+      --color-bg: #e0eef6;
+      --color-text: #000000;
+      --color-acento: #009eca;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--color-bg);
+      color: var(--color-text);
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    .add-button {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      padding: 10px;
+      background-color: var(--color-acento);
+      border: none;
+      color: white;
+      font-size: 1em;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 50px;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+
+    th {
+      background-color: var(--color-acento);
+      color: white;
+    }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2em;
+      margin: 0 5px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      width: 80%;
+      max-width: 500px;
+    }
+
+    .close-btn {
+      float: right;
+      font-size: 1.5em;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <button class="add-button" onclick="openAddModal()">➕ Agregar Medicamento</button>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Descripción</th>
+          <th>Dosis Recomendada</th>
+          <th>Efectos Secundarios</th>
+          <th>Restricciones</th>
+          <th>Síntomas</th>
+          <th>Creado En</th>
+          <th>Actualizado En</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="medicamentosTable">
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal para agregar medicamento -->
+  <div class="modal" id="addModal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeAddModal()">✖</span>
+      <h3>Agregar Medicamento</h3>
+      <form id="addForm">
+        <label>Nombre:</label><br>
+        <input type="text" id="addNombre" required><br><br>
+        <label>Descripción:</label><br>
+        <input type="text" id="addDescripcion" required><br><br>
+        <label>Dosis Recomendada:</label><br>
+        <input type="text" id="addDosis" required><br><br>
+        <label>Efectos Secundarios:</label><br>
+        <input type="text" id="addEfectos" required><br><br>
+        <label>Restricciones:</label><br>
+        <input type="text" id="addRestricciones" required><br><br>
+        <label>Síntomas:</label><br>
+        <input type="text" id="addSintomas" required><br><br>
+        <button type="button" onclick="registerMedicamento()">Registrar Medicamento</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const medicamentos = [
+      { Nombre: "Ibuprofeno", Descripccion: "Antiinflamatorio", Dosis_Recomendada: "200mg", Efectos_Secundarios: "Náuseas", Restricciones: "No en embarazo", Sintomas: "Dolor", Creado_En: "2023-01-01 10:00", Actualizado_En: "2023-01-10 14:00" },
+      { Nombre: "Paracetamol", Descripccion: "Analgésico", Dosis_Recomendada: "500mg", Efectos_Secundarios: "Mareos", Restricciones: "No mezclar con alcohol", Sintomas: "Fiebre", Creado_En: "2023-01-05 11:00", Actualizado_En: "2023-01-15 15:30" }
+    ];
+
+    function renderTable() {
+      const tableBody = document.getElementById("medicamentosTable");
+      tableBody.innerHTML = "";
+      medicamentos.forEach((medicamento, index) => {
+        const row = `
+          <tr>
+            <td>${medicamento.Nombre}</td>
+            <td>${medicamento.Descripccion}</td>
+            <td>${medicamento.Dosis_Recomendada}</td>
+            <td>${medicamento.Efectos_Secundarios}</td>
+            <td>${medicamento.Restricciones}</td>
+            <td>${medicamento.Sintomas}</td>
+            <td>${medicamento.Creado_En}</td>
+            <td>${medicamento.Actualizado_En || "-"}</td>
+            <td>
+              <button class="icon-btn" onclick="openEditModal(${index})">✏️</button>
+              <button class="icon-btn" onclick="deleteMedicamento(${index})">🗑️</button>
+            </td>
+          </tr>
+        `;
+        tableBody.innerHTML += row;
+      });
+    }
+
+    // Abrir y cerrar el modal de agregar medicamento
+    function openAddModal() {
+      document.getElementById("addModal").style.display = "flex";
+    }
+
+    function closeAddModal() {
+      document.getElementById("addModal").style.display = "none";
+      document.getElementById("addForm").reset();
+    }
+
+    // Registrar nuevo medicamento
+    function registerMedicamento() {
+      const newMedicamento = {
+        Nombre: document.getElementById("addNombre").value,
+        Descripccion: document.getElementById("addDescripcion").value,
+        Dosis_Recomendada: document.getElementById("addDosis").value,
+        Efectos_Secundarios: document.getElementById("addEfectos").value,
+        Restricciones: document.getElementById("addRestricciones").value,
+        Sintomas: document.getElementById("addSintomas").value,
+        Creado_En: new Date().toLocaleString(),
+        Actualizado_En: ""
+      };
+
+      // Simular el guardado en la base de datos agregándolo a la lista y recargar la tabla
+      medicamentos.push(newMedicamento);
+      renderTable();
+      closeAddModal();
+    }
+
+    // Función para abrir modal de edición, eliminar y otras funciones CRUD
+    function openEditModal(index) {
+      alert("Función de edición en desarrollo");
+    }
+
+    function deleteMedicamento(index) {
+      medicamentos.splice(index, 1);
+      renderTable();
+    }
+
+    // Renderizar la tabla al cargar la página
+    renderTable();
+  </script>
+</body>
+</html>
