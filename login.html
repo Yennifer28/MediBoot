@@ -4,16 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login de Prueba</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background: repeating-linear-gradient(
-                45deg,
-                rgba(85, 174, 211, 0.1),
-                rgba(85, 174, 211, 0.1) 20px,
-                #f0f0f0 20px,
-                #f0f0f0 40px
-            );
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f0f0f0 0%, #d9e4f5 100%);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -21,107 +16,138 @@
             margin: 0;
         }
         .login-container {
+            display: flex;
+            width: 900px;
+            height: 500px;
             background-color: #fff;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .illustration-section {
+            width: 50%;
+            background: linear-gradient(135deg, #55aed3 0%, #005f99 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .illustration-section img {
+            max-width: 80%;
+            height: auto;
+        }
+        .login-section {
+            width: 50%;
             padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            max-width: 800px;
-            width: 100%;
-            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #f9f9f9;
         }
-        .login-container h2 {
-            color: #55aed3;
+        .login-section h2 {
+            color: #005f99;
             margin-bottom: 20px;
+            text-align: center;
+            font-size: 24px;
         }
-        .login-container input {
-            width: calc(100% - 20px);
-            padding: 10px;
+        .login-section input {
+            width: 100%;
+            padding: 15px;
             margin: 10px 0;
             border: 1px solid #ccc;
-            border-radius: 4px;
+            border-radius: 5px;
             box-sizing: border-box;
+            font-size: 16px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.3s;
         }
-        .login-container button {
-            width: calc(100% - 20px);
-            padding: 10px;
+        .login-section input:focus {
+            border-color: #55aed3;
+            outline: none;
+        }
+        .login-section button {
+            width: 100%;
+            padding: 15px;
             background-color: #55aed3;
             border: none;
             color: white;
-            border-radius: 4px;
+            border-radius: 5px;
             cursor: pointer;
             margin-top: 10px;
+            font-size: 16px;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-        .login-container button:hover {
+        .login-section button:hover {
             background-color: #469bb3;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
-        .data-container {
-            margin-top: 20px;
-            text-align: left;
+        .login-section a {
+            color: #005f99;
+            margin-top: 15px;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        .login-section a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
     <div class="login-container">
-        <img src="https://i.imgur.com/qXwvFLN.jpg" alt="Logo de Mediboot en algún CS" style="width: 100%; height: auto; margin-bottom: 20px;">
-        <h2>"MediBoot"</h2>
-        <input type="email" id="email" placeholder="Usuario/Correo electrónico">
-        <input type="password" id="password" placeholder="Contraseña">
-        <button id="loginButton">Iniciar sesión</button>
-        <div class="data-container" id="dataContainer"></div>
+        <div class="illustration-section">
+            <img src="https://i.postimg.cc/bNm2wvtc/medi-1.png" alt="Ilustración">
+        </div>
+        <div class="login-section">
+            <h2>¡Bienvenido a Mediboot!</h2>
+            <input type="email" id="email" placeholder="Correo electrónico">
+            <input type="text" id="nombre" placeholder="Nombre">
+            <button id="loginButton">Iniciar sesión</button>
+            <a href="register.html">¿Todavía no tienes una cuenta? Regístrate</a>
+            <!-- Register no existe, pero dejé el botón "enlazado", aqui hay que unirlo. -->
+        </div>
     </div>
 
-    <!-- usando los CDN se importa firebase -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
         // Configuración de Firebase
         const firebaseConfig = {
-        apiKey: "AIzaSyDgD24OIJa0q_fPUQRVEpdWy2kLqfvn8rE",
-        authDomain: "mediboot-d6d85.firebaseapp.com",
-        projectId: "mediboot-d6d85",
-        storageBucket: "mediboot-d6d85.firebasestorage.app",
-        messagingSenderId: "636585030532",
-        appId: "1:636585030532:web:b0f30147a45d9c03a563d1",
-        measurementId: "G-WGGS5W549Z"
-  };
+            apiKey: "AIzaSyDgD24OIJa0q_fPUQRVEpdWy2kLqfvn8rE",
+            authDomain: "mediboot-d6d85.firebaseapp.com",
+            projectId: "mediboot-d6d85",
+            storageBucket: "mediboot-d6d85.firebasestorage.app",
+            messagingSenderId: "636585030532",
+            appId: "1:636585030532:web:b0f30147a45d9c03a563d1",
+            measurementId: "G-WGGS5W549Z"
+        };
 
-        // Inicializar Firebase 
+        // Iniciar Firebase
         const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Login usando Authentication agregando usuarios, falta que se registren usuarios 
+        // Función de login
         async function login() {
             const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+            const nombre = document.getElementById('nombre').value;
             try {
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                // Login exitoso
-                alert('Login exitoso');
-                obtenerDatos();
+                // Consultar la colección "usuario" para verificar que email y nombre existen para que asimismo coincidan.
+                const userQuery = query(collection(db, "usuario"), where("email", "==", email), where("nombre", "==", nombre));
+                const querySnapshot = await getDocs(userQuery);
+                if (!querySnapshot.empty) {
+                    querySnapshot.forEach((doc) => {
+                        console.log('Usuario encontrado:', doc.data());
+                        alert('Login exitoso');
+                    });
+                } else {
+                    alert('Email o nombre incorrectos');
+                }
             } catch (error) {
-                // Error en el login
                 alert('Error: ' + error.message);
             }
-        }
-
-        // Función para obtener datos de la colección "medicamento", para mera prueba de conexión.
-        async function obtenerDatos() {
-            const querySnapshot = await getDocs(collection(db, "medicamento"));
-            const dataContainer = document.getElementById('dataContainer');
-            dataContainer.innerHTML = ''; // Limpiar contenido previo
-            querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                const div = document.createElement('div');
-                div.textContent = `${doc.id} => ${JSON.stringify(data)}`;
-                dataContainer.appendChild(div);
-            });
         }
         document.getElementById('loginButton').addEventListener('click', login);
     </script>
 </body>
 </html>
-
