@@ -136,9 +136,17 @@
                 // Consultar la colección "usuario" para verificar que email y password existen y coincidan.
                 const userQuery = query(collection(db, "usuario"), where("email", "==", email), where("password", "==", password));
                 const querySnapshot = await getDocs(userQuery);
+                
+                // Verificar si el usuario existe
                 if (!querySnapshot.empty) {
-                    alert('Login exitoso');
-                    window.location.href = "principal.html"; // Redirecciona a principal.html
+                    if (email === "root@gmail.com" && password === "root") {
+                        // Redireccionar a Admin.html si es el usuario root
+                        window.location.href = "Admin.html";
+                    } else {
+                        // Redireccionar a principal.html para otros usuarios
+                        alert('Login exitoso');
+                        window.location.href = "principal.html";
+                    }
                 } else {
                     alert('Email o contraseña incorrectos');
                 }
