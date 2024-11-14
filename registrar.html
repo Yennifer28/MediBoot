@@ -7,98 +7,98 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-    --color-bg: #009eca; /* Color de fondo externo */
-    --color-formulario: #ffffff; /* Color de fondo del formulario */
-    --color-texto: #009eca; /* Color del texto del botón y de título */
-    --color-placeholder: #666666;
-}
+            --color-bg: #009eca; /* Color de fondo externo */
+            --color-formulario: #ffffff; /* Color de fondo del formulario */
+            --color-texto: #009eca; /* Color del texto del botón y de título */
+            --color-placeholder: #666666;
+        }
 
-body {
-    background-color: var(--color-bg);
-    color: var(--color-texto);
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+        body {
+            background-color: var(--color-bg);
+            color: var(--color-texto);
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-.container {
-    width: 100%;
-    max-width: 400px;
-    padding: 20px;
-}
+        .container {
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+        }
 
-.formulario-registro {
-    background-color: var(--color-formulario);
-    border-radius: 12px;
-    padding: 35px;
-    width: 100%;
-    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
-}
+        .formulario-registro {
+            background-color: var(--color-formulario);
+            border-radius: 12px;
+            padding: 35px;
+            width: 100%;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+        }
 
-.formulario-registro h2 {
-    text-align: center;
-    margin: 0 0 35px 0;
-    color: var(--color-texto);
-    font-size: 28px;
-}
+        .formulario-registro h2 {
+            text-align: center;
+            margin: 0 0 35px 0;
+            color: var(--color-texto);
+            font-size: 28px;
+        }
 
-.input-group {
-    margin: 20px 0;
-    position: relative;
-}
+        .input-group {
+            margin: 20px 0;
+            position: relative;
+        }
 
-.input-group i {
-    color: var(--color-placeholder);
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-}
+        .input-group i {
+            color: var(--color-placeholder);
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
 
-.input-group input {
-    width: 100%;
-    padding: 12px 12px 12px 40px;
-    border: 1px solid #cccccc;
-    border-radius: 8px;
-    box-sizing: border-box;
-    font-size: 14px;
-    background-color: #ffffff;
-    color: #333333;
-}
+        .input-group input {
+            width: 100%;
+            padding: 12px 12px 12px 40px;
+            border: 1px solid #cccccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 14px;
+            background-color: #ffffff;
+            color: #333333;
+        }
 
-.input-group input::placeholder {
-    color: var(--color-placeholder);
-}
+        .input-group input::placeholder {
+            color: var(--color-placeholder);
+        }
 
-.input-group input:focus {
-    outline: none;
-    border-color: var(--color-bg);
-    background-color: #f2f2f2;
-}
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--color-bg);
+            background-color: #f2f2f2;
+        }
 
-button {
-    background-color: var(--color-texto);
-    color: #ffffff;
-    padding: 14px 20px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    width: 100%;
-    font-size: 16px;
-    font-weight: bold;
-    margin-top: 20px;
-    transition: all 0.3s ease;
-}
+        button {
+            background-color: var(--color-texto);
+            color: #ffffff;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
 
-button:hover {
-    background-color: #007fa3;
-}
+        button:hover {
+            background-color: #007fa3;
+        }
 
-       #successModal {
+        #successModal {
             display: none;
             position: fixed;
             z-index: 1;
@@ -111,8 +111,6 @@ button:hover {
             padding-top: 60px;
         }
 
-
-        
         .modal-content {
             background-color: white;
             margin: 5% auto;
@@ -124,7 +122,6 @@ button:hover {
             border-radius: 12px;
             box-shadow: 0 3px 15px rgba(0, 0, 0, 0.2);
         }
-
 
         .close {
             color: #aaa;
@@ -255,13 +252,20 @@ button:hover {
             const closeModal = document.getElementById("closeModal");
             closeModal.onclick = function() {
                 modal.style.display = "none";
-            }
+                window.location.href = "login.html"; // Redirigir a login.html
+            };
 
             window.onclick = function(event) {
                 if (event.target === modal) {
                     modal.style.display = "none";
+                    window.location.href = "login.html"; // Redirigir a login.html
                 }
-            }
+            };
+
+            // También puedes agregar un temporizador para redirigir automáticamente después de unos segundos
+            setTimeout(() => {
+                window.location.href = "login.html";
+            }, 2000); // Espera 2 segundos antes de redirigir
         }
     </script>
 </body>
