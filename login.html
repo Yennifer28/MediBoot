@@ -6,6 +6,7 @@
     <title>Login de Prueba</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
+        /* Estilos para el cuerpo y el contenedor del login */
         body {
             font-family: 'Roboto', sans-serif;
             background: linear-gradient(135deg, #f0f0f0 0%, #d9e4f5 100%);
@@ -101,7 +102,7 @@
         <div class="login-section">
             <h2>¡Bienvenido a Mediboot!</h2>
             <input type="email" id="email" placeholder="Correo electrónico">
-            <input type="text" id="nombre" placeholder="Nombre">
+            <input type="password" id="password" placeholder="Contraseña">
             <button id="loginButton">Iniciar sesión</button>
             <a href="register.html">¿Todavía no tienes una cuenta? Regístrate</a>
             <!-- Register no existe, pero dejé el botón "enlazado", aqui hay que unirlo. -->
@@ -109,6 +110,7 @@
     </div>
 
     <script type="module">
+        // Importamos las librerías necesarias de Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
         import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
@@ -130,10 +132,10 @@
         // Función de login
         async function login() {
             const email = document.getElementById('email').value;
-            const nombre = document.getElementById('nombre').value;
+            const password = document.getElementById('password').value;
             try {
-                // Consultar la colección "usuario" para verificar que email y nombre existen para que asimismo coincidan.
-                const userQuery = query(collection(db, "usuario"), where("email", "==", email), where("nombre", "==", nombre));
+                // Consultar la colección "usuario" para verificar que email y password existen y coincidan.
+                const userQuery = query(collection(db, "usuario"), where("email", "==", email), where("password", "==", password));
                 const querySnapshot = await getDocs(userQuery);
                 if (!querySnapshot.empty) {
                     querySnapshot.forEach((doc) => {
@@ -141,12 +143,14 @@
                         alert('Login exitoso');
                     });
                 } else {
-                    alert('Email o nombre incorrectos');
+                    alert('Email o contraseña incorrectos');
                 }
             } catch (error) {
                 alert('Error: ' + error.message);
             }
         }
+
+        // Asigna la función de login al botón nuevamente
         document.getElementById('loginButton').addEventListener('click', login);
     </script>
 </body>
