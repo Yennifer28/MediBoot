@@ -7,261 +7,244 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-    --color-bg: #009eca; /* Color de fondo externo */
-    --color-formulario: #ffffff; /* Color de fondo del formulario */
-    --color-texto: #009eca; /* Color del texto del botón y de título */
-    --color-placeholder: #666666;
-}
-
-body {
-    background-color: var(--color-bg);
-    color: var(--color-texto);
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.container {
-    width: 100%;
-    max-width: 400px;
-    padding: 20px;
-}
-
-.formulario-registro {
-    background-color: var(--color-formulario);
-    border-radius: 12px;
-    padding: 35px;
-    width: 100%;
-    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
-}
-
-.formulario-registro h2 {
-    text-align: center;
-    margin: 0 0 35px 0;
-    color: var(--color-texto);
-    font-size: 28px;
-}
-
-.input-group {
-    margin: 20px 0;
-    position: relative;
-}
-
-.input-group i {
-    color: var(--color-placeholder);
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-.input-group input {
-    width: 100%;
-    padding: 12px 12px 12px 40px;
-    border: 1px solid #cccccc;
-    border-radius: 8px;
-    box-sizing: border-box;
-    font-size: 14px;
-    background-color: #ffffff;
-    color: #333333;
-}
-
-.input-group input::placeholder {
-    color: var(--color-placeholder);
-}
-
-.input-group input:focus {
-    outline: none;
-    border-color: var(--color-bg);
-    background-color: #f2f2f2;
-}
-
-button {
-    background-color: var(--color-texto);
-    color: #ffffff;
-    padding: 14px 20px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    width: 100%;
-    font-size: 16px;
-    font-weight: bold;
-    margin-top: 20px;
-    transition: all 0.3s ease;
-}
-
-button:hover {
-    background-color: #007fa3;
-}
-
-       #successModal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
+            --color-bg: #009eca;
+            --color-formulario: #ffffff;
+            --color-texto: #009eca;
+            --color-placeholder: #666666;
+        }
+        body {
+            background-color: var(--color-bg);
+            color: var(--color-texto);
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
             width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.5);
-            padding-top: 60px;
-        }
-
-
-        
-        .modal-content {
-            background-color: white;
-            margin: 5% auto;
-            padding: 25px;
-            border: none;
-            width: 80%;
             max-width: 400px;
-            text-align: center;
+            padding: 20px;
+        }
+        .formulario-registro {
+            background-color: var(--color-formulario);
             border-radius: 12px;
-            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.2);
+            padding: 35px;
+            width: 100%;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
         }
-
-
-        .close {
-            color: #aaa;
-            float: right;
+        .formulario-registro h2 {
+            text-align: center;
+            margin: 0 0 35px 0;
+            color: var(--color-texto);
             font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: color 0.3s;
         }
-
-        .close:hover,
-        .close:focus {
+        .input-group {
+            margin: 20px 0;
+            position: relative;
+        }
+        .input-group i {
+            color: var(--color-placeholder);
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px 12px 12px 40px;
+            border: 1px solid #cccccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 14px;
+            background-color: #ffffff;
             color: #333333;
         }
+        .input-group input::placeholder {
+            color: var(--color-placeholder);
+        }
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--color-bg);
+            background-color: #f2f2f2;
+        }
+        button {
+            background-color: var(--color-texto);
+            color: #ffffff;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background-color: #007fa3;
+        }
+        #successModal {
+            display: none; 
+            position: fixed; 
+            z-index: 1; 
+            left: 0; 
+            top: 0; 
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.5); 
+            padding-top: 60px; 
+        }
+        .modal-content {
+          background-color:white; 
+          margin:auto; 
+          padding :25px; 
+          border:none; 
+          width :80%; 
+          max-width :400px; 
+          text-align:center; 
+          border-radius :12px; 
+          box-shadow :0 3px 15px rgba(0,0,0,0.2); 
+      }
+      .close { 
+          color:#aaa; 
+          float:right; 
+          font-size :28px; 
+          font-weight:bold; 
+          cursor:pointer; 
+          transition :color .3s; 
+      }
+      .close:hover, .close :focus { 
+          color:#333333; 
+      }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="formulario-registro">
-            <h2>Regístrate</h2>
-            <form id="registroForm">
-                <div class="input-group">
-                    <i class="fas fa-user"></i>
-                    <input type="text" id="nombre" name="nombre" placeholder="Nombre" required>
-                </div>
-                <div class="input-group">
-                    <i class="fas fa-envelope"></i>
-                    <input type="email" id="email" name="email" placeholder="Correo electrónico" required>
-                </div>
-                <div class="input-group">
-                    <i class="fas fa-phone"></i>
-                    <input type="tel" id="telefono" name="telefono" placeholder="Teléfono">
-                </div>
-                <div class="input-group">
-                    <i class="fas fa-lock"></i>
-                    <input type="password" id="password" name="password" placeholder="Contraseña" required>
-                </div>
-                <div class="input-group">
-                    <i class="fas fa-lock"></i>
-                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirmar Contraseña" required>
-                </div>
-                <button type="submit">Registrarse</button>
-            </form>
-        </div>
-    </div>
+           <h2>Regístrate</h2>
+           <form id="registroForm">
+               <div class="input-group">
+                   <i class="fas fa-user"></i>
+                   <input type="text" id="nombre" name="nombre" placeholder="Nombre" required>
+               </div>
+               <div class="input-group">
+                   <i class="fas fa-envelope"></i>
+                   <input type="email" id="email" name="email" placeholder="Correo electrónico" required>
+               </div>
+               <div class="input-group">
+                   <i class="fas fa-phone"></i>
+                   <input type="tel" id="telefono" name="telefono" placeholder="Teléfono">
+               </div>
+               <div class="input-group">
+                   <i class="fas fa-lock"></i>
+                   <input type="password" id="password" name="password" placeholder="Contraseña" required>
+               </div>
+               <div class="input-group">
+                   <i class="fas fa-lock"></i>
+                   <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirmar Contraseña" required>
+               </div>
+               <button type="submit">Registrarse</button>
+           </form>
+       </div>
+   </div>
 
-    <div id="successModal">
-        <div class="modal-content">
-            <span class="close" id="closeModal">&times;</span>
-            <h2>¡Usuario registrado exitosamente!</h2>
-        </div>
-    </div>
+   <div id="successModal">
+       <div class="modal-content">
+           <span class="close" id="closeModal">&times;</span>
+           <h2>¡Usuario registrado exitosamente!</h2>
+       </div>
+   </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-auth.js";
-        import { getFirestore, setDoc, doc } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js";
+   <script type="module">
+       import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
+       import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-auth.js";
+       import { getFirestore, setDoc, doc } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDgD24OIJa0q_fPUQRVEpdWy2kLqfvn8rE",
-            authDomain: "mediboot-d6d85.firebaseapp.com",
-            projectId: "mediboot-d6d85",
-            storageBucket: "mediboot-d6d85.firebasestorage.app",
-            messagingSenderId: "636585030532",
-            appId: "1:636585030532:web:b0f30147a45d9c03a563d1",
-            measurementId: "G-WGGS5W549Z"
-        };
+       const firebaseConfig = {
+           apiKey: "AIzaSyDgD24OIJa0q_fPUQRVEpdWy2kLqfvn8rE",
+           authDomain: "mediboot-d6d85.firebaseapp.com",
+           projectId: "mediboot-d6d85",
+           storageBucket: "mediboot-d6d85.firebasestorage.app",
+           messagingSenderId:"636585030532",
+           appId:"1 :636585030532:web:b0f30147a45d9c03a563d1",
+           measurementId:"G-WGGS5W549Z"
+       };
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+       const app = initializeApp(firebaseConfig);
+       const auth = getAuth(app);
+       const db = getFirestore(app);
 
-        document.getElementById('registroForm').addEventListener('submit', async function (e) {
-            e.preventDefault();
+       document.getElementById('registroForm').addEventListener('submit', async function (e) {
+           e.preventDefault();
+           const nombre = document.getElementById('nombre').value;
+           const email = document.getElementById('email').value;
+           const telefono = document.getElementById('telefono').value;
+           const password = document.getElementById('password').value;
+           const confirmPassword = document.getElementById('confirmPassword').value;
 
-            const nombre = document.getElementById('nombre').value;
-            const email = document.getElementById('email').value;
-            const telefono = document.getElementById('telefono').value;
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
+           if (password !== confirmPassword) {
+               alert("Las contraseñas no coinciden");
+               return;
+           }
 
-            if (password !== confirmPassword) {
-                alert("Las contraseñas no coinciden");
-                return;
-            }
+           try {
+               const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+               const user = userCredential.user;
 
-            try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
+               // Hash de la contraseña
+               const hashedPassword = await hashPassword(password);
 
-                await setDoc(doc(db, "usuario", user.uid), {
-                    nombre: nombre,
-                    email: email,
-                    telefono: telefono,
-                    creadoEn: new Date()
-                });
+               await setDoc(doc(db, "usuario", user.uid), {
+                   nombre,
+                   email,
+                   telefono,
+                   password: hashedPassword, // Guarda la contraseña hasheada
+                   creadoEn:new Date()
+               });
+               showSuccessModal();
+           } catch (error) {
+               console.error("Error al registrar el usuario:", error.message);
+               if (error.code) {
+                   switch (error.code) {
+                       case 'auth/email-already-in-use':
+                           alert("El correo electrónico ya está en uso.");
+                           break;
+                       case 'auth/weak-password':
+                           alert("La contraseña es muy débil. Debe tener al menos 6 caracteres.");
+                           break;
+                       case 'auth/invalid-email':
+                           alert("El correo electrónico no es válido.");
+                           break;
 
-                showSuccessModal();
+                       default:
+                           alert("Ocurrió un error al registrar el usuario. Intenta nuevamente.");
+                   }
+               } else {
+                   alert("Error desconocido. Intenta nuevamente.");
+               }
+           }
+       });
 
-            } catch (error) {
-                console.error("Error al registrar el usuario:", error.message);
+       function showSuccessModal() {
+           const modal = document.getElementById("successModal");
+           modal.style.display = "block";
+           const closeModal = document.getElementById("closeModal");
+           closeModal.onclick = function() { modal.style.display = "none"; }
+           window.onclick = function(event) { if (event.target === modal) { modal.style.display = "none"; } }
+       }
 
-                if (error.code) {
-                    switch (error.code) {
-                        case 'auth/email-already-in-use':
-                            alert("El correo electrónico ya está en uso.");
-                            break;
-                        case 'auth/weak-password':
-                            alert("La contraseña es muy débil. Debe tener al menos 6 caracteres.");
-                            break;
-                        case 'auth/invalid-email':
-                            alert("El correo electrónico no es válido.");
-                            break;
-                        default:
-                            alert("Ocurrió un error al registrar el usuario. Intenta nuevamente.");
-                    }
-                } else {
-                    alert("Error desconocido. Intenta nuevamente.");
-                }
-            }
-        });
-
-        function showSuccessModal() {
-            const modal = document.getElementById("successModal");
-            modal.style.display = "block";
-
-            const closeModal = document.getElementById("closeModal");
-            closeModal.onclick = function() {
-                modal.style.display = "none";
-            }
-
-            window.onclick = function(event) {
-                if (event.target === modal) {
-                    modal.style.display = "none";
-                }
-            }
-        }
-    </script>
+       // Función para hashear la contraseña
+       async function hashPassword(password) {
+           const encoder = new TextEncoder();
+           const data = encoder.encode(password);
+           const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+           const hashArray = Array.from(new Uint8Array(hashBuffer));
+           return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+       }
+   </script>
 </body>
 </html>
