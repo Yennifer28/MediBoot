@@ -93,19 +93,29 @@
 
     /* Sección de chat */
     .chat {
-      background-color: var(--color-bg);
+    
+      outline: solid;
+      outline-color: #55aed3;
+      background-color: #b2daeb;
       color: var(--color-text);
       padding: 20px;
       border-radius: 10px;
       text-align: center;
-      width: 100%;
-      max-width: 600px;
+      width: fit-content;
+      height: 100%;
+      max-width: 700px;
+      max-height: 650px;
       margin-top: 80px;
       flex-grow: 1;
+      overflow-y : scroll;
+      overflow-x: hidden;
+      
     }
 
     /* Barra de mensajes */
     .barra-mensajes {
+      outline: solid;
+      outline-color: #55aed3;
       display: flex;
       align-items: center;
       padding: 10px 20px;
@@ -126,7 +136,13 @@
       border-radius: 20px;
       font-size: 1em;
       margin-right: 10px;
+      /*text-transform: lowercase;*/
     }
+
+    .input-mensaje::first-letter{
+      text-transform: capitalize;
+    }
+    
 
     .icono-microfono {
       width: 28px;
@@ -146,15 +162,26 @@
       width: fit-content;
       margin-bottom: 10px;
       max-width: 80%;
+
     }
+
 
     .chat-message.user {
       background-color: #d1ffd6;
       align-self: flex-end;
+      margin-left: 500px;
+      text-wrap: wrap;
+      text-transform: lowercase;
+    }
+
+    .chat-message.user::first-letter{
+      text-transform: capitalize;
     }
 
     .chat-message.ai {
       background-color: #cce6ff;
+      align-self: flex-end;
+      
     }
   </style>
 </head>
@@ -225,11 +252,14 @@
 
     // Función para enviar mensaje
     function sendMessage() {
-      const userMessage = userInput.value.trim();
-      if (userMessage === "") return;
 
+      const userMessage = userInput.value.trim();
+      const capitalizedMessage = userMessage.charAt(0).toUpperCase() + userMessage.slice(1).toLowerCase();
+
+    
+      if (userMessage === "") return;
       // Mostrar mensaje del usuario
-      addMessage(userMessage, "user");
+      addMessage(capitalizedMessage, "user");
 
       // Limpiar el input
       userInput.value = "";
@@ -254,18 +284,18 @@
 
         // Si el mensaje es el primer mensaje, saludar
         if (userMessage === "Hola" || isFirstMessage) {
-          respuestaAI = "Buen día, ¿qué medicamento deseas consultar?";
+          respuestaAI = "Hola!!! Buen día, ¿qué medicamento deseas consultar?";
         }
 
         // Lógica de consulta a base de datos
-        const medicamento = await buscarMedicamento(userMessage);
-        console.log('mensaje',userMessage);
+        const medicamento = await buscarMedicamento(capitalizedMessage);
+        console.log('mensaje',capitalizedMessage);
         if (medicamento) {
-          respuestaAI = `Medicamento      : ${medicamento.Nombre}. 
-                          \nDescripción   : ${medicamento.Descripcion}.
-                          \nSíntomas: ${medicamento.Sintomas}.
-                          \nEfectos secundarios: ${medicamento.Efectos_secundarios}.
-                          \nRestricciones: ${medicamento.Restricciones}`;
+          respuestaAI = `${medicamento.Nombre}
+                          \n${medicamento.Descripcion}
+                          \n${medicamento.Sintomas}
+                          \n${medicamento.Efectos_Secundarios}
+                          \n${medicamento.Restricciones}`;
         }
 
         // Añadir el mensaje de la IA al chat
@@ -280,10 +310,12 @@
       messageDiv.innerText = message;
       chatMessages.appendChild(messageDiv);
       chatMessages.scrollTop = chatMessages.scrollHeight; // Desplazarse hacia abajo
+
     }
 
     // Función para buscar medicamento en la base de datos
     async function buscarMedicamento(nombreMedicamento) {
+      nombreMedicamento
       const medicamentosRef = db.collection("medicamento");
       const snapshot = await medicamentosRef.where("Nombre", "==", nombreMedicamento).get();
       if (snapshot.empty) {
