@@ -283,7 +283,8 @@
       const userMessage = userInput.value.trim();
       const capitalizedMessage = userMessage.charAt(0).toUpperCase() + userMessage.slice(1).toLowerCase();
 
-    
+  
+
       if (userMessage === "") return;
       // Mostrar mensaje del usuario
       addMessage(capitalizedMessage, "user");
@@ -323,6 +324,9 @@
                           \n${medicamento.Sintomas}
                           \n${medicamento.Efectos_Secundarios}
                           \n${medicamento.Restricciones}`;
+
+        // Guardar el medicamento en el historial
+        await crearHistorial(medicamento);
         }
 
         // Añadir el mensaje de la IA al chat
@@ -352,6 +356,36 @@
       const medicamento = snapshot.docs[0].data();
       return medicamento;
     }
+
+
+    async function crearHistorial(medicamento) {
+    const historialRef = db.collection("historial");
+    
+    // Verificar si el medicamento ya está en el historial (por nombre)
+    const snapshot = await historialRef.where("Nombre", "==", medicamento.Nombre).get();
+    
+    // Si no se encuentra, lo agregamos a la colección
+    if (snapshot.empty) {
+        const fecha = new Date();
+        const idFecha = `${fecha.getFullYear()}-${(fecha.getMonth() + 1).toString().padStart(2, '0')}-${fecha.getDate().toString().padStart(2, '0')}_${fecha.getHours().toString().padStart(2, '0')}-${fecha.getMinutes().toString().padStart(2, '0')}-${fecha.getSeconds().toString().padStart(2, '0')}`;
+
+        // Crear un nuevo documento en la colección "historial"
+        await historialRef.add({
+            Nombre: medicamento.Nombre,
+            Descripcion: medicamento.Descripcion,
+            Sintomas: medicamento.Sintomas,
+            Efectos_Secundarios: medicamento.Efectos_Secundarios,
+            Restricciones: medicamento.Restricciones,
+            Fecha: idFecha, // Agregar la fecha de consulta
+            Usuario: email // Si se quiere almacenar el email del usuario
+        });
+        console.log("Medicamento guardado en el historial.");
+    } else {
+        console.log("El medicamento ya fue consultado.");
+    }
+}
+
+
   </script>
 </body>
 </html>
