@@ -260,6 +260,10 @@
     const chatMessages = document.getElementById("chatMessages");
     const userInput = document.getElementById("userInput");
 
+    //Recuperación de correo
+    const email = sessionStorage.getItem("email");
+    console.log('@@ email', email);
+
     let isFirstMessage = true; // Variable para verificar si es el primer mensaje
 
     // Firebase Configuration
@@ -351,6 +355,9 @@
       const medicamento = snapshot.docs[0].data();
       return medicamento;
     }
+
+
+
   </script>
 </body>
 </html>
