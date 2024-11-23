@@ -259,7 +259,8 @@
     const bienvenida = document.getElementById("bienvenida");
     const chatMessages = document.getElementById("chatMessages");
     const userInput = document.getElementById("userInput");
-
+    const email = sessionStorage.getItem("email");
+    console.log('@@ email', email);
     let isFirstMessage = true; // Variable para verificar si es el primer mensaje
 
     // Firebase Configuration

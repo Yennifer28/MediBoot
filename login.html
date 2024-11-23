@@ -208,6 +208,7 @@
                 if (!querySnapshot.empty) {
                     querySnapshot.forEach((doc) => {
                         console.log('Usuario encontrado:', doc.data());
+                        sessionStorage.setItem("email", email);
                         alert('Login exitoso');
                         window.location.href = "principal.html";
                     });
