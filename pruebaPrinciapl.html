@@ -91,29 +91,6 @@
       height: 30px;
     }
 
-/* Icono de perfil */
-.perfil-icono {
-      position: absolute;
-      top: 10px;
-      right: 05px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-    }
-
-    .icono-perfil {
-      width: 62px;
-      height: 62px;
-      border-radius: 50%; /* Hacerlo circular */
-      cursor: pointer;
-      transition: transform 0.2s ease;
-    }
-
-    .icono-perfil:hover {
-      transform: scale(1.1); /* Aumentar tamaño al pasar el cursor */
-    }
-
     /* Sección de chat */
     .chat {
     
@@ -124,7 +101,7 @@
       padding: 20px;
       border-radius: 10px;
       text-align: center;
-      width: 900px;
+      width: fit-content;
       height: 100%;
       max-width: 700px;
       max-height: 650px;
@@ -143,7 +120,7 @@
       align-items: center;
       padding: 10px 20px;
       border-radius: 30px;
-      width: calc(100% - 600px); /* Ajuste para pegar al historial */
+      width: calc(100% - 520px); /* Ajuste para pegar al historial */
       margin-top: auto;
       position: absolute;
       bottom: 20px;
@@ -230,9 +207,6 @@
     <div class="header-container">
       <img class="logo" src="icono.png" alt="Logo Robot Médico">
       <span class="titulo">Mediboot</span>
-      <a href="perfil.html" class="perfil-icono">
-        <img src="https://i.postimg.cc/3wCr1xhV/5b669f7d6e2a4a8a3558747c0967562a.png" alt="Perfil" class="icono-perfil">
-      </a>
     </div>
 
     <!-- Sección de chat -->
@@ -251,6 +225,7 @@
 
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore-compat.js"></script>
   
@@ -327,6 +302,10 @@
         // Añadir el mensaje de la IA al chat
         addMessage(respuestaAI, "ai");
       }, 1000); // Simula un retraso de 1 segundo antes de responder
+      
+      if (userMessage === "crear receta") {
+        createRecipePDF();
+      }
     }
 
     // Función para agregar mensaje al chat
@@ -350,6 +329,19 @@
 
       const medicamento = snapshot.docs[0].data();
       return medicamento;
+    }
+    function createRecipePDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      
+
+      doc.text("Receta Médica", 20, 20);
+      doc.text("Nombre del Paciente: ", 20, 30);
+      doc.text("Medicamento: ", 20, 40);
+      doc.text("Dosis: ", 20, 50);
+      doc.text("Fecha: " + new Date().toLocaleDateString(), 20, 60);
+
+      doc.save("receta_medica.pdf");
     }
   </script>
 </body>
