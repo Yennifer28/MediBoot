@@ -377,15 +377,65 @@
             Efectos_Secundarios: medicamento.Efectos_Secundarios,
             Restricciones: medicamento.Restricciones,
             Fecha: idFecha, // Agregar la fecha de consulta
-            Usuario: email // Si se quiere almacenar el email del usuario
+            Email: email // Si se quiere almacenar el email del usuario
         });
         console.log("Medicamento guardado en el historial.");
     } else {
         console.log("El medicamento ya fue consultado.");
     }
-}
 
 
-  </script>
+    //buscar usuario coleccion
+    const usuariosRef = db.collection('usuario');
+
+    // Buscar el usuario por su email
+    usuariosRef.where("email", "==", email).get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          const userData = doc.data();
+          const nombre = userData.nombre;
+          const telefono = userData.telefono;
+
+          // Una vez que tengas los datos del usuario, consulta su historial
+          obtenerHistorial(email, nombre, telefono);
+        });
+      })
+      .catch((error) => {
+        console.error("Error obteniendo el usuario: ", error);
+      });
+
+
+      
+  function obtenerHistorialMedicamentos(nombre, email, telefono) {
+    const historialRef = db.collection('historial');
+    
+    // Obtener todos los registros de medicamentos
+    historialRef.where("Email", "==", email).get()
+      .then((querySnapshot) => {
+        let historialMedicamentos = [];
+        
+        querySnapshot.forEach((doc) => {
+          const medicamentoData = doc.data();
+          historialMedicamentos.push({
+            nombre: medicamentoData.Nombre,
+            descripcion: medicamentoData.Descripcion,
+            sintomas: medicamentoData.Sintomas,
+            efectosSecundarios: medicamentoData.Efectos_Secundarios,
+            restricciones: medicamentoData.Restricciones,
+            fecha: medicamentoData.Fecha
+          });
+        });
+  
+        // Ahora generamos el PDF con los datos del usuario y los registros de medicamentos
+        generarPDF(nombre, email, telefono, historialMedicamentos);
+      })
+      .catch((error) => {
+        console.error("Error obteniendo el historial de medicamentos: ", error);
+      });
+    }
+
+  }
+
+</script>
 </body>
 </html>

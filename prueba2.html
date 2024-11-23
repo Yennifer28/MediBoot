@@ -1,298 +1,108 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Asistente de Medicamentos</title>
-  <style>
-    /* Variables de color */
-    :root {
-      --color-bg: #e0eef6; /* Fondo azul claro */
-      --color-historial: #009eca; /* Azul para historial */
-      --color-text: #000000; /* Texto negro */
-      --color-acento: #55aed3; /* Azul más oscuro */
-    }
+<script>
 
-    /* Estilos generales */
-    body {
-      font-family: 'Arial', sans-serif;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      background-color: var(--color-bg);
-      color: var(--color-text);
-      height: 100vh;
-    }
+// Referencia a Firestore
+const db = firebase.firestore();
+const usuariosRef = db.collection('usuario');
 
-    /* Historial de consultas */
-    .historial {
-      width: 300px;
-      background-color: var(--color-historial);
-      padding: 20px;
-      height: 100%;
-      overflow-y: auto;
-    }
 
-    .historial h3 {
-      font-size: 1.5em;
-      margin-bottom: 15px;
-      color: rgb(22, 19, 19);
-    }
+// Buscar el usuario por su email
+usuariosRef.where("email", "==", email).get()
+  .then((querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+      const userData = doc.data();
+      const nombre = userData.nombre;
+      const telefono = userData.telefono;
 
-    .consulta {
-      padding: 10px;
-      margin-bottom: 10px;
-      background-color: transparent;
-      color: rgb(18, 12, 12);
-    }
+      // Una vez que tengas los datos del usuario, consulta su historial
+      obtenerHistorial(email, nombre, telefono);
+    });
+  })
+  .catch((error) => {
+    console.error("Error obteniendo el usuario: ", error);
+  });
 
-    /* Contenedor principal */
-    .main-container {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
-      position: relative;
-    }
-
-    /* Sección superior con fondo azul */
-    .header-container {
-      width: calc(100%); /* Ancho restante de la pantalla */
-      background-color: var(--color-acento); /* Fondo azul para el contenedor */
-      box-sizing: border-box;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: absolute;
-      top: 0;
-      right: 0;
-      margin-left: 300px; /* Añadir margen izquierdo para alinearlo después del historial */
-    }
-
-    /* Logo, título y menú en cabecera */
-    .logo {
-      width: 70px;
-      height: 80px;
-      margin-right: 10px;
-    }
-
-    .titulo {
-      flex: 1;
-      text-align: center;
-      font-weight: bold;
-      font-size: 1.5em;
-      color: white;
-    }
-
-    .menu {
-      cursor: pointer;
-      width: 30px;
-      height: 30px;
-    }
-
-    /* Sección de chat */
-    .chat {
-      outline: solid;
-      outline-color: #55aed3;
-      background-color: #b2daeb;
-      color: var(--color-text);
-      padding: 20px;
-      border-radius: 10px;
-      text-align: center;
-      width: fit-content;
-      height: 100%;
-      max-width: 700px;
-      max-height: 650px;
-      margin-top: 80px;
-      flex-grow: 1;
-      overflow-y : scroll;
-      overflow-x: hidden;
-    }
-
-    /* Barra de mensajes */
-    .barra-mensajes {
-      outline: solid;
-      outline-color: #55aed3;
-      display: flex;
-      align-items: center;
-      padding: 10px 20px;
-      border-radius: 30px;
-      width: calc(100% - 520px); /* Ajuste para pegar al historial */
-      margin-top: auto;
-      position: absolute;
-      bottom: 20px;
-      left: 300px;
-      box-sizing: border-box;
-      background-color: #fff;
-    }
-
-    .input-mensaje {
-      flex: 1;
-      padding: 10px;
-      border: none;
-      border-radius: 20px;
-      font-size: 1em;
-      margin-right: 10px;
-    }
-
-    .icono-microfono {
-      width: 28px;
-      height: 28px;
-      cursor: pointer;
-    }
-
-    .chat-message {
-      padding: 10px;
-      background-color: #cce6ff;
-      border-radius: 10px;
-      width: fit-content;
-      margin-bottom: 10px;
-      max-width: 80%;
-    }
-
-    .chat-message.user {
-      background-color: #d1ffd6;
-      align-self: flex-end;
-      margin-left: 500px;
-      text-wrap: wrap;
-      text-transform: lowercase;
-    }
-
-    .chat-message.user::first-letter{
-      text-transform: capitalize;
-    }
-
-    .chat-message.ai {
-      background-color: #cce6ff;
-      align-self: flex-end;
-    }
-  </style>
-</head>
-<body>
-
-  <!-- Historial de consultas -->
-  <div class="historial">
-    <h3>Historial de Consultas</h3><br><br><br>
-    <div class="consulta">Hoy: Consulta de medicamento A</div>
-    <div class="consulta">Hoy: Consulta de medicamento B</div>
-    <h3>Últimos 7 días</h3>
-    <div class="consulta">Consulta de medicamento C</div>
-    <div class="consulta">Consulta de medicamento D</div>
-    <h3>Mes pasado</h3>
-    <div class="consulta">Consulta de medicamento E</div>
-    <div class="consulta">Consulta de medicamento F</div>
-  </div>
-
-  <!-- Contenedor principal -->
-  <div class="main-container">
-
-    <!-- Contenedor de cabecera pegado a historial y a la derecha -->
-    <div class="header-container">
-      <img class="logo" src="icono.png" alt="Logo Robot Médico">
-      <span class="titulo">Mediboot</span>
-    </div>
-
-    <!-- Sección de chat -->
-    <div class="chat">
-      <h2 id="bienvenida">Bienvenido a tu Asistente de Medicamentos</h2>
-      <p>Consulta información detallada sobre medicamentos y programa recordatorios.</p>
-      <div id="chatMessages"></div>
-    </div>
-
-    <!-- Barra de mensajes pegada al historial -->
-    <div class="barra-mensajes">
-      <input type="text" class="input-mensaje" id="userInput" placeholder="Escribe tu mensaje aquí...">
-      <img width="5%" onclick="sendMessage()" src="env.png">
-    </div>
-
-  </div>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore-compat.js"></script>
-  
-  <script>
-    // Elementos
-    const bienvenida = document.getElementById("bienvenida");
-    const chatMessages = document.getElementById("chatMessages");
-    const userInput = document.getElementById("userInput");
-
-    let isFirstMessage = true; // Variable para verificar si es el primer mensaje
-
-    // Firebase Configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyDgD24OIJa0q_fPUQRVEpdWy2kLqfvn8rE",
-      authDomain: "mediboot-d6d85.firebaseapp.com",
-      projectId: "mediboot-d6d85",
-      storageBucket: "mediboot-d6d85.firebasestorage.app",
-      messagingSenderId: "636585030532",
-      appId: "1:636585030532:web:b0f30147a45d9c03a563d1",
-      measurementId: "G-WGGS5W549Z"
-    };
-
-    const app = firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore(app);
-
-    // Función para enviar mensaje
-    function sendMessage() {
-      const userMessage = userInput.value.trim();
-      const capitalizedMessage = userMessage.charAt(0).toUpperCase() + userMessage.slice(1).toLowerCase();
+  function obtenerHistorialMedicamentos(nombre, email, telefono) {
+    const historialRef = db.collection('historial');
     
-      if (userMessage === "") return;
-      // Mostrar mensaje del usuario
-      addMessage(capitalizedMessage, "user");
+    // Obtener todos los registros de medicamentos
+    historialRef.get()
+      .then((querySnapshot) => {
+        let historialMedicamentos = [];
+        
+        querySnapshot.forEach((doc) => {
+          historialMedicamentos.push(doc.data());
+        });
+  
+        // Ahora generamos el PDF con los datos del usuario y los registros de medicamentos
+        generarPDF(nombre, email, telefono, historialMedicamentos);
+      })
+      .catch((error) => {
+        console.error("Error obteniendo el historial de medicamentos: ", error);
+      });
+  }
+  
+  function obtenerHistorialMedicamentos(nombre, email, telefono) {
+    const historialRef = db.collection('historial');
+    
+    // Obtener todos los registros de medicamentos
+    historialRef.where("Email", "==", email).get()
+      .then((querySnapshot) => {
+        let historialMedicamentos = [];
+        
+        querySnapshot.forEach((doc) => {
+          const medicamentoData = doc.data();
+          historialMedicamentos.push({
+            nombre: medicamentoData.Nombre,
+            descripcion: medicamentoData.Descripcion,
+            sintomas: medicamentoData.Sintomas,
+            efectosSecundarios: medicamentoData.Efectos_Secundarios,
+            restricciones: medicamentoData.Restricciones,
+            fecha: medicamentoData.Fecha
+          });
+        });
+  
+        // Ahora generamos el PDF con los datos del usuario y los registros de medicamentos
+        generarPDF(nombre, email, telefono, historialMedicamentos);
+      })
+      .catch((error) => {
+        console.error("Error obteniendo el historial de medicamentos: ", error);
+      });
+  }
 
-      // Limpiar el input
-      userInput.value = "";
+  import { jsPDF } from "jspdf";
 
-      // Desaparecer mensaje de bienvenida si es necesario
-      if (bienvenida) {
-        bienvenida.style.display = "none";
-      }
+function generarPDF(nombre, email, telefono, historialMedicamentos) {
+  const doc = new jsPDF();
 
-      // Si es el primer mensaje, enviar el mensaje de bienvenida
-      if (isFirstMessage) {
-        setTimeout(() => {
-          addMessage("Buen día, ¿qué medicamento quieres consultar?", "ai");
-        }, 500); // Retraso de medio segundo para simular respuesta
-        isFirstMessage = false; // Después de este mensaje, ya no es el primero
-        return; // Salir de la función aquí para evitar enviar una respuesta de IA
-      }
+  // Título del PDF
+  doc.setFontSize(16);
+  doc.text("Receta Médica", 10, 10);
 
-      // Logica de los mensajes de IA
-      if (userMessage === "crear receta") {
-        createRecipePDF();
-      } else {
-        // Aquí puedes hacer que la IA responda con mensajes personalizados
-        setTimeout(() => {
-          addMessage("Respondiendo a tu consulta sobre: " + userMessage, "ai");
-        }, 500); // Retraso de medio segundo para simular respuesta
-      }
-    }
+  // Información del usuario
+  doc.setFontSize(12);
+  doc.text(`Nombre: ${nombre}`, 10, 20);
+  doc.text(`Email: ${email}`, 10, 30);
+  doc.text(`Teléfono: ${telefono}`, 10, 40);
 
-    // Función para agregar mensaje a la interfaz
-    function addMessage(message, sender) {
-      const messageElement = document.createElement("div");
-      messageElement.classList.add("chat-message", sender);
-      messageElement.textContent = message;
-      chatMessages.appendChild(messageElement);
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
+  // Datos de los medicamentos
+  doc.text("Historial de Medicamentos:", 10, 50);
+  
+  let startY = 60;
+  historialMedicamentos.forEach((item, index) => {
+    doc.text(`Medicamento ${index + 1}:`, 10, startY);
+    doc.text(`Nombre: ${item.nombre}`, 10, startY + 10);
+    doc.text(`Descripción: ${item.descripcion}`, 10, startY + 20);
+    doc.text(`Síntomas: ${item.sintomas}`, 10, startY + 30);
+    doc.text(`Efectos Secundarios: ${item.efectosSecundarios}`, 10, startY + 40);
+    doc.text(`Restricciones: ${item.restricciones}`, 10, startY + 50);
+    doc.text(`Fecha: ${item.fecha}`, 10, startY + 60);
+    
+    startY += 70;  // Ajustar el espacio entre cada medicamento
+  });
 
-    // Función para crear receta en PDF
-    function createRecipePDF() {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
+  // Guardar el PDF
+  doc.save("receta.pdf");
+}
 
-      doc.text("Receta Médica", 20, 20);
-      doc.text("Nombre del Paciente: ", 20, 30);
-      doc.text("Medicamento: ", 20, 40);
-      doc.text("Dosis: ", 20, 50);
-      doc.text("Fecha: " + new Date().toLocaleDateString(), 20, 60);
 
-      doc.save("receta_medica.pdf");
-    }
-  </script>
-</body>
-</html>
+</script>
