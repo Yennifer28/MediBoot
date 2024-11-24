@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generar Receta Médica</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+</head>
+<body>
+  <div style="text-align: center; margin-top: 50px;">
+    <h1>Generar Receta Médica</h1>
+    <button id="generatePDFButton" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">
+      Generar PDF
+    </button>
+  </div>
+
+  <script>
+    const generatePrescriptionPDF = () => {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      const imagePath = "PlantillaReceta.jpg";
+
+      const img = new Image();
+      img.src = imagePath;
+
+      img.onload = () => {
+        doc.addImage(img, "JPEG", 0, 0, 210, 297);
+
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(12);
+
+        doc.text("Dr. MediBoot", 20, 125); 
+        doc.text("Tu asistente medico de confianza", 20, 130);
+        doc.text("Medicina General", 20, 135);
+
+        doc.text("Nombre del Paciente: María López", 20, 150);
+        doc.text("Edad: 35 años", 20, 155);
+        doc.text("Fecha: 23/11/2024", 20, 160);
+
+        doc.text("1. Paracetamol 500mg - 1 tableta cada 8 horas por 5 días.", 20, 180);
+        doc.text("2. Ibuprofeno 400mg - 1 tableta cada 12 horas por 7 días.", 20, 188);
+        doc.text("3. Amoxicilina 500mg - 1 cápsula cada 8 horas por 10 días.", 20, 196);
+
+        doc.save("RecetaMedica.pdf");
+      };
+    };
+
+    document.getElementById("generatePDFButton").addEventListener("click", generatePrescriptionPDF);
+  </script>
+</body>
+</html>
