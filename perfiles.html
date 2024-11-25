@@ -190,7 +190,6 @@
     </style>
 </head>
 <body>
-    
     <div class="profile-container">
         <!-- Ícono de perfil en la parte superior -->
         <div class="profile-icon" id="profileIcon"></div>
@@ -200,20 +199,20 @@
             <div class="profile-field">
                 <div>
                     <strong>Nombre:</strong>
-                    <span id="nombreUsuario">Tu nombre:</span>
+                    <span id="nombreUsuario">"Aqui debe ir el nombre de usuario leido de Firebase"</span>
                 </div>
-                <div class="edit-icon" id="editNombre" onclick="openDialog('dialogNombre')"></div>
+                <div class="edit-icon" id="editNombre"></div>
             </div>
             <div class="profile-field">
                 <div>
                     <strong>Email:</strong>
-                    <span id="correoUsuario">Tu e-mail:</span>
+                    <span>"Aqui debe ir el email leido de Firebase"</span>
                 </div>
             </div>
             <div class="profile-field">
                 <div>
                     <strong>Número Telefónico:</strong>
-                    <span id="numeroUsuario">Tu telefono:</span>
+                    <span id="numeroTelefono">"Aqui debe ir el núm.tel. leido de Firebase"</span>
                 </div>
                 <div class="edit-icon" id="editTelefono"></div>
             </div>
@@ -231,7 +230,7 @@
             <h3>Editar nombre</h3>
             <input type="text" id="inputNombre" placeholder="Introduce tu nombre">
             <div class="dialog-buttons">
-                <button id="saveNombre">Guardar </button>
+                <button id="saveNombre">Guardar</button>
                 <button id="closeNombre">Cancelar</button>
             </div>
         </div>
@@ -250,157 +249,149 @@
         </div>
     </div>
 
-    <!-- Firebase y lógica de JavaScript -->
-    
-    
-    
-    <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore-compat.js"></script>
-    <script type="module" src="">
-        import { updateDoc, doc } from "firebase/firestore";
-    </script>
-    <script>
+</div>
+</div>
+<script type="module">
+    // Importar Firebase
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
 
-        const nombreUsuario = document.getElementById("nombreUsuario")
-        const correoUsuario = document.getElementById("correoUsuario")
-        const numeroUsuario = document.getElementById("numeroUsuario")
+    // Configuración de Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyDgD24OIJa0q_fPUQRVEpdWy2kLqfvn8rE",
+        authDomain: "mediboot-d6d85.firebaseapp.com",
+        projectId: "mediboot-d6d85",
+        storageBucket: "mediboot-d6d85.appspot.com",
+        messagingSenderId: "636585030532",
+        appId: "1:636585030532:web:b0f30147a45d9c03a563d1",
+        measurementId: "G-WGGS5W549Z"
+    };
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDgD24OIJa0q_fPUQRVEpdWy2kLqfvn8rE",
-            authDomain: "mediboot-d6d85.firebaseapp.com",
-            projectId: "mediboot-d6d85",
-            storageBucket: "mediboot-d6d85.firebasestorage.app",
-            messagingSenderId: "636585030532",
-            appId: "1:636585030532:web:b0f30147a45d9c03a563d1",
-            measurementId: "G-WGGS5W549Z"
-        };
+    // Inicializar Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-        const app = firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore(app);
-        
-
-        // Aqui podemos definir que usuario vamos a estar editando
-
-        const UsuarioActual = buscarUsuario('jorge');
-        
-    
-        
-        // Funcion para buscar a nuestro usuario por nombre
-        async function buscarUsuario(nombre) {
-            const Ref = db.collection("usuario");
-            const snapshot = await Ref.where("nombre", "==", nombre).get();
-            if (snapshot.empty) {
-                return null;
+ // Función para cargar los datos del usuario desde Firebase
+ const loadUserData = async () => {
+        try {
+            const docRef = doc(db, "usuarios", "usuario1"); // Reemplaza "usuario1" por el ID real del documento
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                document.getElementById("nombreUsuario").textContent = data.nombre || "No disponible";
+                document.getElementById("numeroTelefono").textContent = data.telefono || "No disponible";
+            } else {
+                console.error("No se encontró el documento.");
             }
-
-            const Usuario = snapshot.docs[0].data();
-            console.log(Usuario.nombre);
-            actualizarUsuario(Usuario.nombre,nombreUsuario)
-            actualizarUsuario(Usuario.email,correoUsuario)
-            actualizarUsuario(Usuario.telefono,numeroUsuario)
-            return Usuario;
+        } catch (error) {
+            console.error("Error al cargar datos:", error);
         }
+    };
 
-        function actualizarUsuario(message,padre) {
-            const messageDiv = document.createElement("div");
-            messageDiv.classList.add("chat-message");
-            messageDiv.innerText = message;
-            padre.appendChild(messageDiv);
-  
+    // Función para actualizar datos del usuario en Firebase
+    const updateUserData = async (field, value) => {
+        try {
+            const docRef = doc(db, "usuarios", "usuario1"); // Reemplaza "usuario1" por el ID real del documento
+            await updateDoc(docRef, { [field]: value });
+        } catch (error) {
+            console.error("Error al actualizar datos:", error);
         }
+    };
 
-        // Guardar cambios en Firebase
-        async function guardarDato(ref, campo, valor) {
-    
-            const documentRef = ref;
-            const updateData = {
-            campo: valor,
-            };
+    // Cargar los datos del usuario al iniciar la página
+    loadUserData();
+</script>
+<script>
+    // Función para abrir los diálogos
+    function openDialog(dialogId) {
+        document.getElementById(dialogId).style.display = 'flex';
+    }
 
-            documentRef.update(updateData)
-        }
-  
+    // Función para cerrar los diálogos
+    function closeDialog(dialogId) {
+        document.getElementById(dialogId).style.display = 'none';
+    }
 
-        // Leer datos de Firebase
-        function cargarDatos() {
-            const userDoc = db.collection("usuarios").doc("usuarioEjemplo"); // Cambiar ID al usuario correspondiente
-            userDoc.get().then((doc) => {
-                if (doc.exists) {
-                    const data = doc.data();
-                    document.getElementById("nombreUsuario").textContent = data.nombre || "Sin nombre";
-                    document.getElementById("emailUsuario").textContent = data.email || "Sin email";
-                    document.getElementById("numeroTelefono").textContent = data.telefono || "Sin teléfono";
-                } else {
-                    console.error("No se encontró el documento.");
-                }
-            }).catch((error) => {
-                console.error("Error al obtener datos:", error);
-            });
-        }
+    // Evento para abrir y cerrar el diálogo de nombre
+    document.getElementById('editNombre').addEventListener('click', function () {
+        openDialog('dialogNombre');
+    });
 
+    document.getElementById('closeNombre').addEventListener('click', function () {
+        closeDialog('dialogNombre');
+    });
 
+    document.getElementById('saveNombre').addEventListener('click', async function () {
+        const nuevoNombre = document.getElementById('inputNombre').value;
+        document.getElementById('nombreUsuario').textContent = nuevoNombre;
 
-        // Eventos para editar nombre y teléfono
-        document.getElementById('saveNombre').addEventListener('click', function () {
-            console.log('Intentando guardad')
-            const nuevoNombre = document.getElementById('inputNombre').value;
-            guardarDato("nombre", nuevoNombre);
-            document.getElementById('nombreUsuario').textContent = nuevoNombre;
-            closeDialog('dialogNombre');
-        });
+        // Actualizar en Firebase
+        await updateUserData("nombre", nuevoNombre);
 
-        document.getElementById('saveTelefono').addEventListener('click', function () {
-            const nuevoTelefono = document.getElementById('inputTelefono').value;
-            guardarDato("telefono", nuevoTelefono);
-            document.getElementById('numeroTelefono').textContent = nuevoTelefono;
-            closeDialog('dialogTelefono');
-        });
+        closeDialog('dialogNombre');
+    });
 
-        // Función para abrir los diálogos
-        function openDialog(dialogId) {
-            document.getElementById(dialogId).style.display = 'flex';
-        }
+    // Evento para abrir y cerrar el diálogo de teléfono
+    document.getElementById('editTelefono').addEventListener('click', function () {
+        openDialog('dialogTelefono');
+    });
 
-        // Función para cerrar los diálogos
-        function closeDialog(dialogId) {
-            document.getElementById(dialogId).style.display = 'none';
-        }
+    document.getElementById('closeTelefono').addEventListener('click', function () {
+        closeDialog('dialogTelefono');
+    });
 
-        // Evento para abrir y cerrar el diálogo de nombre
-        document.getElementById('editNombre').addEventListener('click', function () {
-            console.log('Intentando cerrar')
-            openDialog('dialogNombre');
-        });
+    document.getElementById('saveTelefono').addEventListener('click', async function () {
+        const nuevoTelefono = document.getElementById('inputTelefono').value;
+        document.getElementById('numeroTelefono').textContent = nuevoTelefono;
 
-        document.getElementById('closeNombre').addEventListener('click', function () {
-            closeDialog('dialogNombre');
-        });
+        // Actualizar en Firebase
+        await updateUserData("telefono", nuevoTelefono);
 
-        document.getElementById('saveNombre').addEventListener('click', function () {
-            const nuevoNombre = document.getElementById('inputNombre').value;
-            document.getElementById('nombreUsuario').textContent = nuevoNombre;
-            // Aquí se debería añadir la lógica para "guardar" el nombre en Firebase
-            guardarDato(UsuarioActual,'nombre', nuevoNombre)
-            closeDialog('dialogNombre');
-        });
+        closeDialog('dialogTelefono');
+    });
+</script>
+<script>
+    // Función para abrir los diálogos
+    function openDialog(dialogId) {
+        document.getElementById(dialogId).style.display = 'flex';
+    }
 
-        // Evento para abrir y cerrar el diálogo de teléfono
-        document.getElementById('editTelefono').addEventListener('click', function () {
-            openDialog('dialogTelefono');
-        });
+    // Función para cerrar los diálogos
+    function closeDialog(dialogId) {
+        document.getElementById(dialogId).style.display = 'none';
+    }
 
-        document.getElementById('closeTelefono').addEventListener('click', function () {
-            closeDialog('dialogTelefono');
-        });
+    // Evento para abrir y cerrar el diálogo de nombre
+    document.getElementById('editNombre').addEventListener('click', function () {
+        openDialog('dialogNombre');
+    });
 
-        document.getElementById('saveTelefono').addEventListener('click', function () {
-            const nuevoTelefono = document.getElementById('inputTelefono').value;
-            document.getElementById('numeroTelefono').textContent = nuevoTelefono;
-            // Aquí se debería añadir la lógica para "guardar" el número telefónico en Firebase
-            closeDialog('dialogTelefono');
-        });
+    document.getElementById('closeNombre').addEventListener('click', function () {
+        closeDialog('dialogNombre');
+    });
 
-    </script>
+    document.getElementById('saveNombre').addEventListener('click', function () {
+        const nuevoNombre = document.getElementById('inputNombre').value;
+        document.getElementById('nombreUsuario').textContent = nuevoNombre;
+        // Aquí se debería añadir la lógica para "guardar" el nombre en Firebase
+        closeDialog('dialogNombre');
+    });
+
+    // Evento para abrir y cerrar el diálogo de teléfono
+    document.getElementById('editTelefono').addEventListener('click', function () {
+        openDialog('dialogTelefono');
+    });
+
+    document.getElementById('closeTelefono').addEventListener('click', function () {
+        closeDialog('dialogTelefono');
+    });
+
+    document.getElementById('saveTelefono').addEventListener('click', function () {
+        const nuevoTelefono = document.getElementById('inputTelefono').value;
+        document.getElementById('numeroTelefono').textContent = nuevoTelefono;
+        // Aquí se debería añadir la lógica para "guardar" el número telefónico en Firebase
+        closeDialog('dialogTelefono');
+    });
+</script>
 </body>
 </html>
-  <!-- corregir errores -->
