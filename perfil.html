@@ -194,7 +194,7 @@
                 <div class="edit-icon" id="editTelefono"></div>
             </div>
         </div>
-        <a href="index.html" class="back-to-login">
+        <a href="principal.html" class="back-to-login">
             <img src="https://i.postimg.cc/Y0TD9P87/Action-States-Vol.webp" alt="Volver a Mediboot">
             Volver a Mediboot
         </a>
@@ -225,10 +225,9 @@
     </div>
 
     <script type="module">
-        // Importar Firebase
+        // Importar Firebase y "configuración".
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
         import { getFirestore, collection, query, where, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
-
         const firebaseConfig = {
             apiKey: "AIzaSyDgD24OIJa0q_fPUQRVEpdWy2kLqfvn8rE",
             authDomain: "mediboot-d6d85.firebaseapp.com",
@@ -241,37 +240,36 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Cargar los datos de Firebase
+        // Cargar los datos de sessionStorage con los elementos de Login
         const loadUserData = () => {
             try {
-                const userData = JSON.parse(localStorage.getItem('loggedInUser'));
+                const userData = JSON.parse(sessionStorage.getItem('loggedInUser'));
                 if (userData) {
                     document.getElementById("nombreUsuario").textContent = userData.nombre || "No disponible";
                     document.getElementById("emailUsuario").textContent = userData.email || "No disponible";
                     document.getElementById("numeroTelefono").textContent = userData.telefono || "No disponible";
                 } else {
-                    console.error("No se encontró información del usuario en localStorage");
+                    console.error("No se encontró información del usuario en sessionStorage");
                 }
             } catch (error) {
                 console.error("Error al cargar datos:", error);
             }
         };
-
         loadUserData();
 
-        // Función para actualizar los datos en Firebase
+        // Función para actualizar los datos en Firebase y en sessionStorage
         const updateUserData = async (field, value) => {
             try {
-                const userData = JSON.parse(localStorage.getItem('loggedInUser'));
+                const userData = JSON.parse(sessionStorage.getItem('loggedInUser'));
                 if (userData) {
                     const userQuery = query(collection(db, "usuario"), where("email", "==", userData.email));
                     const querySnapshot = await getDocs(userQuery);
                     querySnapshot.forEach(async (doc) => {
                         const docRef = doc.ref;
                         await updateDoc(docRef, { [field]: value });
-                        // Actualizar localStorage
+                        // Actualizar sessionStorage, en teoría si se guarda en desarrollo->Aplicación no debe afectar a las consultas.
                         userData[field] = value;
-                        localStorage.setItem('loggedInUser', JSON.stringify(userData));
+                        sessionStorage.setItem('loggedInUser', JSON.stringify(userData));
                     });
                 }
             } catch (error) {
