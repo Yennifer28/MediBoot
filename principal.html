@@ -213,14 +213,6 @@
   <!-- Historial de consultas -->
   <div class="historial">
     <h3>Historial de Consultas</h3><br><br><br>
-    <div class="consulta">Hoy: Consulta de medicamento A</div>
-    <div class="consulta">Hoy: Consulta de medicamento B</div>
-    <h3>Últimos 7 días</h3>
-    <div class="consulta">Consulta de medicamento C</div>
-    <div class="consulta">Consulta de medicamento D</div>
-    <h3>Mes pasado</h3>
-    <div class="consulta">Consulta de medicamento E</div>
-    <div class="consulta">Consulta de medicamento F</div>
   </div>
 
   <!-- Contenedor principal -->
@@ -276,6 +268,83 @@
 
     const app = firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore(app);
+
+
+    
+        async function cargarHistorial() {
+        const historialRef = db.collection('historial');
+        const historialDiv = document.querySelector('.historial');
+
+        // Limpiar el contenido actual del historial
+        historialDiv.innerHTML = `<h3>Historial de Consultas</h3>`;
+
+        try {
+          // Filtrar solo por email, sin usar orderBy
+          const querySnapshot = await historialRef.where("Email", "==", email).get();
+
+          if (querySnapshot.empty) {
+            historialDiv.innerHTML += `<div class="consulta">No hay consultas previas registradas.</div>`;
+            return;
+          }
+
+          // Convertir los documentos a un array para procesar
+          const documentos = querySnapshot.docs.map(doc => ({
+            ...doc.data(),
+            Fecha: new Date(doc.data().Fecha) // Convertir la fecha a un objeto Date
+          }));
+
+          // Ordenar manualmente por fecha en orden descendente
+          documentos.sort((a, b) => b.Fecha - a.Fecha);
+
+          // Categorizar los registros en diferentes secciones
+          const hoy = [];
+          const ultimos7Dias = [];
+          const mesPasado = [];
+          const ahora = new Date();
+
+          documentos.forEach(doc => {
+            const { Nombre, Fecha } = doc;
+            const diferenciaDias = Math.floor((ahora - Fecha) / (1000 * 60 * 60 * 24));
+
+            if (diferenciaDias === 0) {
+              hoy.push({ Nombre, Fecha });
+            } else if (diferenciaDias <= 7) {
+              ultimos7Dias.push({ Nombre, Fecha });
+            } else if (diferenciaDias <= 30) {
+              mesPasado.push({ Nombre, Fecha });
+            }
+          });
+
+          // Crear secciones de historial
+          if (hoy.length > 0) {
+            historialDiv.innerHTML += `<h3>Hoy</h3>`;
+            hoy.forEach(consulta => {
+              historialDiv.innerHTML += `<div class="consulta">Hoy: Consulta de medicamento ${consulta.Nombre}</div>`;
+            });
+          }
+
+          if (ultimos7Dias.length > 0) {
+            historialDiv.innerHTML += `<h3>Últimos 7 días</h3>`;
+            ultimos7Dias.forEach(consulta => {
+              historialDiv.innerHTML += `<div class="consulta">${consulta.Fecha.toLocaleDateString()}: Consulta de medicamento ${consulta.Nombre}</div>`;
+            });
+          }
+
+          if (mesPasado.length > 0) {
+            historialDiv.innerHTML += `<h3>Mes pasado</h3>`;
+            mesPasado.forEach(consulta => {
+              historialDiv.innerHTML += `<div class="consulta">${consulta.Fecha.toLocaleDateString()}: Consulta de medicamento ${consulta.Nombre}</div>`;
+            });
+          }
+        } catch (error) {
+          console.error("Error cargando el historial: ", error);
+          historialDiv.innerHTML += `<div class="consulta">Error cargando el historial.</div>`;
+        }
+      }
+
+          
+      // Llama a cargarHistorial cuando la página cargue
+      window.onload = cargarHistorial;
 
     // Función para enviar mensaje
     function sendMessage() {
@@ -433,6 +502,8 @@
         console.error("Error obteniendo el historial de medicamentos: ", error);
       });
     }
+
+
 
   }
 
