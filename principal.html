@@ -252,7 +252,7 @@
     const chatMessages = document.getElementById("chatMessages");
     const userInput = document.getElementById("userInput");
     const email = sessionStorage.getItem("email");
-    console.log('@@ email', email);
+    console.log('@@ email --->', email);
     let isFirstMessage = true; // Variable para verificar si es el primer mensaje
 
     // Firebase Configuration
@@ -270,40 +270,43 @@
     const db = firebase.firestore(app);
 
 
-   
-    async function consultarHistorialPorEmail(email) {
+ // Función para consultar historial por email y mostrar Fecha y Nombre
+ async function consultarHistorialPorEmail(email1) {
       try {
-        if (typeof email !== 'string') {
-          console.error('El email proporcionado no es válido:', email);
+        if (typeof email1 !== 'string') {
+          console.error('El email proporcionado no es válido:', email1);
           return;
         }
 
         const historialRef = db.collection('historial');
-        const querySnapshot = await historialRef.where('Email', '==', email).get();
+        const querySnapshot = await historialRef.where('Email', '==', email1).get();
 
         if (querySnapshot.empty) {
-          console.log("No se encontraron registros para el email:", email);
+          console.log("No se encontraron registros para el email:", email1);
           return;
         }
 
         const historialDiv = document.querySelector('.historial');
-        historialDiv.innerHTML = `<h3>Historial de Consultas</h3><br>`; 
+        historialDiv.innerHTML = "<h3>Historial de Consultas</h3>";
 
         querySnapshot.forEach((doc) => {
-          console.log('Documento encontrado:', doc.id, doc.data());
-          historialDiv.innerHTML += `
-            <div class="consulta">
-              <p><strong>Fecha:</strong> ${doc.data().Fecha}</p>
-              <p><strong>Medicamento:</strong> ${doc.data().NombreMedicamento}</p>
-            </div>
+          const data = doc.data();
+          const consultaDiv = document.createElement('div');
+          consultaDiv.classList.add('consulta');
+          consultaDiv.innerHTML = `
+            <p><strong>Fecha:</strong> ${data.Fecha}</p>
+            <p><strong>Medicamento:</strong> ${data.Nombre}</p>
           `;
+          historialDiv.appendChild(consultaDiv);
         });
       } catch (error) {
         console.error('Error al consultar el historial:', error);
       }
     }
 
+    // Llamada para consultar historial con el email normalizado
     consultarHistorialPorEmail(email);
+    consultarHistorialPorEmail("uriel1@gmail.com");
 
     // Función para enviar mensaje
     function sendMessage() {
