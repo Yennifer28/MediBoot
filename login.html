@@ -212,6 +212,7 @@
                 const userData = doc.data(); // Obtienes toda la información del usuario de manera correcta
                 sessionStorage.setItem("loggedInUser", JSON.stringify(userData)); // Guardamos toda la información
                 // Cambio de localStorage a SessionStorage por modificaciones a mi código
+                sessionStorage.setItem("email",JSON.stringify(email));
                 alert('Login exitoso');
                 window.location.href = "principal.html";
             });
