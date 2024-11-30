@@ -166,6 +166,23 @@
         .dialog-buttons button:hover {
             background-color: #005f99;
         }
+
+         /* Estilos del botón de login */
+.btn-login {
+  background-color: #009eca;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 1em;
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+}
+
+.btn-login:hover {
+  background-color: #007b8f;
+}
     </style>
 </head>
 <body>
@@ -198,6 +215,8 @@
             <img src="https://i.postimg.cc/Y0TD9P87/Action-States-Vol.webp" alt="Volver a Mediboot">
             Volver a Mediboot
         </a>
+        <br><br>
+        <button id="btnLogin" class="btn-login">Cerrar Sesion</button>
     </div>
 
     <!-- Cuadro de diálogo para editar el nombre -->
@@ -239,6 +258,11 @@
         };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+
+         // Obtener el botón y agregar el evento de clic
+document.getElementById("btnLogin").addEventListener("click", function() {
+  window.location.href = "login.html";  // Redirige a login.html
+});
 
         // Cargar los datos de sessionStorage con los elementos de Login
         const loadUserData = () => {

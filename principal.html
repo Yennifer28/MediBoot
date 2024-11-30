@@ -204,8 +204,10 @@
     .chat-message.ai {
       background-color: #cce6ff;
       align-self: flex-end;
-      
+    /* Estilos del botón de login */
     }
+
+
   </style>
 </head>
 <body>
@@ -308,6 +310,72 @@
     consultarHistorialPorEmail(email);
     //consultarHistorialPorEmail("uriel1@gmail.com");
 
+     // Función para consultar historial de medicamentos por email
+async function obtenerHistorialMedicamentos(email) {
+  const historialRef = db.collection('historial');
+  console.log("entre", email)
+  const querySnapshot = await historialRef.where('Email', '==', email).get();
+  let historialMedicamentos = [];
+
+  // Recorriendo los documentos y agregando los datos al historial
+  querySnapshot.forEach((doc) => {
+    const medicamentoData = doc.data();
+    historialMedicamentos.push({
+      email: medicamentoData.Email,
+      nombre: medicamentoData.Nombre,
+      descripcion: medicamentoData.Descripcion,
+      sintomas: medicamentoData.Sintomas,
+      efectosSecundarios: medicamentoData.Efectos_Secundarios,
+      restricciones: medicamentoData.Restricciones,
+      fecha: medicamentoData.Fecha
+    });
+  });
+
+  // Si encontramos medicamentos, generamos el PDF
+  if (historialMedicamentos.length > 0) {
+    generarPDF(historialMedicamentos);  // Aquí llamamos a la función para generar el PDF
+  } else {
+    console.log("No se encontraron medicamentos para este email.");
+  }
+}
+
+// Función para generar un PDF con el historial de medicamentos
+function generarPDF(historialMedicamentos) {
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF();
+
+  // Configurar el título
+  pdf.setFontSize(18);
+  pdf.text("Historial de Medicamentos", 10, 10);
+
+  // Configurar contenido
+  pdf.setFontSize(12);
+  let y = 20;
+
+  historialMedicamentos.forEach((medicamento, index) => {
+    pdf.text(`Email ${index + 1}:`, 10, y);
+    y += 10;
+    pdf.text(`Medicamento ${index + 1}:`, 10, y);
+    y += 10;
+    pdf.text(`Nombre: ${medicamento.nombre}`, 10, y);
+    y += 10;
+    pdf.text(`Descripción: ${medicamento.descripcion}`, 10, y);
+    y += 10;
+    pdf.text(`Síntomas: ${medicamento.sintomas}`, 10, y);
+    y += 10;
+    pdf.text(`Efectos Secundarios: ${medicamento.efectosSecundarios}`, 10, y);
+    y += 10;
+    pdf.text(`Restricciones: ${medicamento.restricciones}`, 10, y);
+    y += 10;
+    pdf.text(`Fecha: ${medicamento.fecha}`, 10, y);
+    y += 20;
+  });
+
+  // Guardar o descargar el PDF
+  pdf.save("HistorialMedicamentos.pdf");
+}
+
+
     // Función para enviar mensaje
     function sendMessage() {
 
@@ -348,7 +416,7 @@
 
         if (userMessage === "Receta") {
           respuestaAI = "Descargando receta?";
-          generarRecetaPDF();
+          obtenerHistorialMedicamentos(email);
             return;
         }
 
@@ -394,31 +462,6 @@
       return medicamento;
     }
 
-      // Función para generar el PDF
-      function generarRecetaPDF() {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-
-        // Contenido de ejemplo
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(20);
-        doc.text("Receta Médica", 105, 20, null, null, "center");
-
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(12);
-        doc.text("Paciente: [Nombre del Paciente]", 10, 40);
-        doc.text("Medicamento: [Medicamento Recetado]", 10, 50);
-        doc.text("Dosificación: [Indicación de Dosis]", 10, 60);
-        doc.text("Instrucciones: [Instrucciones para el Paciente]", 10, 70);
-
-        doc.setFont("helvetica", "italic");
-        doc.setFontSize(10);
-        doc.text("Emitida por Mediboot", 10, 280);
-
-        // Guardar PDF
-        doc.save("receta.pdf");
-        addMessage("Tu receta médica ha sido generada y descargada.", "ai");
-    }
 
 
     async function crearHistorial(medicamento) {
@@ -466,32 +509,6 @@
       .catch((error) => {
         console.error("Error obteniendo el usuario: ", error);
       });
-
-// Función para consultar historial de medicamentos por email
-async function obtenerHistorialMedicamentos(email) {
-      const historialRef = db.collection('historial');
-      const querySnapshot = await historialRef.where('Email', '==', email).get();
-      let historialMedicamentos = [];
-
-      querySnapshot.forEach((doc) => {
-        const medicamentoData = doc.data();
-        historialMedicamentos.push({
-          nombre: medicamentoData.Nombre,
-          descripcion: medicamentoData.Descripcion,
-          sintomas: medicamentoData.Sintomas,
-          efectosSecundarios: medicamentoData.Efectos_Secundarios,
-          restricciones: medicamentoData.Restricciones,
-          fecha: medicamentoData.Fecha
-        });
-      });
-
-      if (historialMedicamentos.length > 0) {
-        generarPDF(historialMedicamentos);
-      } else {
-        console.log("No se encontraron medicamentos para este email.");
-      }
-    }
-
 
 
   }
