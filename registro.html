@@ -247,6 +247,11 @@
            const hashArray = Array.from(new Uint8Array(hashBuffer));
            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
        }
+
+       document.getElementById('goToLoginButton').addEventListener('click', function() {
+    window.location.href = 'login.html'; // Cambia esta ruta por la correcta
+});
+
    </script>
 </body>
 </html>
