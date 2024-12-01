@@ -204,8 +204,10 @@
     .chat-message.ai {
       background-color: #cce6ff;
       align-self: flex-end;
-      
+    /* Estilos del botón de login */
     }
+
+
   </style>
 </head>
 <body>
@@ -213,14 +215,6 @@
   <!-- Historial de consultas -->
   <div class="historial">
     <h3>Historial de Consultas</h3><br><br><br>
-    <div class="consulta">Hoy: Consulta de medicamento A</div>
-    <div class="consulta">Hoy: Consulta de medicamento B</div>
-    <h3>Últimos 7 días</h3>
-    <div class="consulta">Consulta de medicamento C</div>
-    <div class="consulta">Consulta de medicamento D</div>
-    <h3>Mes pasado</h3>
-    <div class="consulta">Consulta de medicamento E</div>
-    <div class="consulta">Consulta de medicamento F</div>
   </div>
 
   <!-- Contenedor principal -->
@@ -250,7 +244,7 @@
     </div>
 
   </div>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore-compat.js"></script>
   
@@ -259,7 +253,8 @@
     const bienvenida = document.getElementById("bienvenida");
     const chatMessages = document.getElementById("chatMessages");
     const userInput = document.getElementById("userInput");
-
+    const email = sessionStorage.getItem("email");
+    console.log('@@ email --->', email);
     let isFirstMessage = true; // Variable para verificar si es el primer mensaje
 
     // Firebase Configuration
@@ -276,13 +271,145 @@
     const app = firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore(app);
 
+
+ // Función para consultar historial por email y mostrar Fecha y Nombre
+ async function consultarHistorialPorEmail(email1) {
+      try {
+        if (typeof email1 !== 'string') {
+          console.error('El email proporcionado no es válido:', email1);
+          return;
+        }
+
+        const historialRef = db.collection('historial');
+        const querySnapshot = await historialRef.where('Email', '==', email1).get();
+
+        if (querySnapshot.empty) {
+          console.log("No se encontraron registros para el email:", email1);
+          return;
+        }
+
+        const historialDiv = document.querySelector('.historial');
+        historialDiv.innerHTML = "<h3>Historial de Consultas</h3>";
+
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          const consultaDiv = document.createElement('div');
+          consultaDiv.classList.add('consulta');
+          consultaDiv.innerHTML = `
+            <p><strong>Fecha:</strong> ${data.Fecha}</p>
+            <p><strong>Medicamento:</strong> ${data.Nombre}</p>
+          `;
+          historialDiv.appendChild(consultaDiv);
+        });
+      } catch (error) {
+        console.error('Error al consultar el historial:', error);
+      }
+    }
+
+    // Llamada para consultar historial con el email normalizado
+    consultarHistorialPorEmail(email);
+    //consultarHistorialPorEmail("uriel1@gmail.com");
+
+     // Función para consultar historial de medicamentos por email
+async function obtenerHistorialMedicamentos(email) {
+  const historialRef = db.collection('historial');
+  console.log("entre", email)
+  const querySnapshot = await historialRef.where('Email', '==', email).get();
+  let historialMedicamentos = [];
+
+  // Recorriendo los documentos y agregando los datos al historial
+  querySnapshot.forEach((doc) => {
+    const medicamentoData = doc.data();
+    historialMedicamentos.push({
+      email: medicamentoData.Email,
+      nombre: medicamentoData.Nombre,
+      descripcion: medicamentoData.Descripcion,
+      sintomas: medicamentoData.Sintomas,
+      efectosSecundarios: medicamentoData.Efectos_Secundarios,
+      restricciones: medicamentoData.Restricciones,
+      fecha: medicamentoData.Fecha
+    });
+  });
+
+  // Si encontramos medicamentos, generamos el PDF
+  if (historialMedicamentos.length > 0) {
+    generarPDF(historialMedicamentos);  // Aquí llamamos a la función para generar el PDF
+  } else {
+    console.log("No se encontraron medicamentos para este email.");
+  }
+}
+
+// Función para generar un PDF con el historial de medicamentos
+function generarPDF(historialMedicamentos) {
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF();
+
+  // Cargar la imagen de fondo
+  const imgUrl = 'receta.png'; // Cambia esto por la ruta de tu imagen PNG
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const pageHeight = pdf.internal.pageSize.getHeight();
+
+   // Agregar imagen al fondo
+  pdf.addImage(imgUrl, 'receta.png', 0, 0, pageWidth, pageHeight);
+  // Agregar imagen de fondo
+  pdf.addImage(imgUrl, "PNG", 0, 0, pageWidth, pageHeight);
+
+  pdf.setFontSize(18);
+  
+  const title = "Historial de Medicamentos";
+  const textWidth = pdf.getTextWidth(title);
+  pdf.text(title, (pageWidth - textWidth) / 2, 40); // Centrando el título
+
+  const fechaActual = new Date();
+  const fechaTexto = `${fechaActual.toLocaleDateString()} ${fechaActual.toLocaleTimeString()}`;
+
+    // Agregar el usuario (email) debajo del título
+  pdf.setFontSize(14);
+  pdf.setTextColor(0, 0, 0); 
+  const userText = `Usuario: ${email}`;
+  const userTextWidth = pdf.getTextWidth(userText);
+  pdf.text(userText, (pageWidth - userTextWidth) / 2, 50); // Posición debajo del título
+
+    // Agregar la fecha debajo del usuario
+  pdf.setFontSize(12); // Tamaño de letra para la fecha
+  pdf.setTextColor(0, 0, 0); 
+  const fechaWidth = pdf.getTextWidth(fechaTexto); // Ancho del texto de la fecha
+  pdf.text(fechaTexto, (pageWidth - fechaWidth) / 2, 55); // Centrada en la posición Y=40
+
+  // Configurar contenido
+  pdf.setFontSize(12);
+  let y = 60;
+  
+  historialMedicamentos.forEach((medicamento, index) => {
+    pdf.text(`Medicamento ${index + 1}:`, 10, y);
+    y += 10;
+    pdf.text(`Nombre: ${medicamento.nombre}`, 10, y);
+    y += 10;
+    pdf.text(`Descripción: ${medicamento.descripcion}`, 10, y);
+    y += 10;
+    pdf.text(`Síntomas: ${medicamento.sintomas}`, 10, y);
+    y += 10;
+    pdf.text(`Efectos Secundarios: ${medicamento.efectosSecundarios}`, 10, y);
+    y += 10;
+    pdf.text(`Restricciones: ${medicamento.restricciones}`, 10, y);
+    y += 10;
+    pdf.text(`Fecha: ${medicamento.fecha}`, 10, y);
+    y += 20;
+  });
+
+  // Guardar o descargar el PDF
+  pdf.save("HistorialMedicamentos.pdf");
+}
+
+
     // Función para enviar mensaje
     function sendMessage() {
 
       const userMessage = userInput.value.trim();
       const capitalizedMessage = userMessage.charAt(0).toUpperCase() + userMessage.slice(1).toLowerCase();
 
-    
+  
+
       if (userMessage === "") return;
       // Mostrar mensaje del usuario
       addMessage(capitalizedMessage, "user");
@@ -313,6 +440,12 @@
           respuestaAI = "Hola!!! Buen día, ¿qué medicamento deseas consultar?";
         }
 
+        if (userMessage === "Receta") {
+          respuestaAI = "Descargando receta?";
+          obtenerHistorialMedicamentos(email);
+            return;
+        }
+
         // Lógica de consulta a base de datos
         const medicamento = await buscarMedicamento(capitalizedMessage);
         console.log('mensaje',capitalizedMessage);
@@ -322,6 +455,9 @@
                           \n${medicamento.Sintomas}
                           \n${medicamento.Efectos_Secundarios}
                           \n${medicamento.Restricciones}`;
+
+        // Guardar el medicamento en el historial
+        await crearHistorial(medicamento);
         }
 
         // Añadir el mensaje de la IA al chat
@@ -351,6 +487,58 @@
       const medicamento = snapshot.docs[0].data();
       return medicamento;
     }
-  </script>
+
+
+
+    async function crearHistorial(medicamento) {
+    const historialRef = db.collection("historial");
+    
+    // Verificar si el medicamento ya está en el historial (por nombre)
+    const snapshot = await historialRef.where("Nombre", "==", medicamento.Nombre).get();
+    
+    // Si no se encuentra, lo agregamos a la colección
+    if (snapshot.empty) {
+        const fecha = new Date();
+        const idFecha = `${fecha.getFullYear()}-${(fecha.getMonth() + 1).toString().padStart(2, '0')}-${fecha.getDate().toString().padStart(2, '0')}_${fecha.getHours().toString().padStart(2, '0')}-${fecha.getMinutes().toString().padStart(2, '0')}-${fecha.getSeconds().toString().padStart(2, '0')}`;
+
+        // Crear un nuevo documento en la colección "historial"
+        await historialRef.add({
+            Nombre: medicamento.Nombre,
+            Descripcion: medicamento.Descripcion,
+            Sintomas: medicamento.Sintomas,
+            Efectos_Secundarios: medicamento.Efectos_Secundarios,
+            Restricciones: medicamento.Restricciones,
+            Fecha: idFecha, // Agregar la fecha de consulta
+            Email: email // Si se quiere almacenar el email del usuario
+        });
+        console.log("Medicamento guardado en el historial.");
+    } else {
+        console.log("El medicamento ya fue consultado.");
+    }
+
+
+    //buscar usuario coleccion
+    const usuariosRef = db.collection('usuario');
+
+    // Buscar el usuario por su email
+    usuariosRef.where("email", "==", email).get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          const userData = doc.data();
+          const nombre = userData.nombre;
+          const telefono = userData.telefono;
+
+          // Una vez que tengas los datos del usuario, consulta su historial
+          obtenerHistorial(email, nombre, telefono);
+        });
+      })
+      .catch((error) => {
+        console.error("Error obteniendo el usuario: ", error);
+      });
+
+
+  }
+
+</script>
 </body>
 </html>
