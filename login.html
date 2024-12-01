@@ -199,8 +199,15 @@
     
         // Función de login
         async function login() {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+            // Verificación especial para el email root@gmail.com y contraseña root
+        if (email === 'root@gmail.com' && password === 'root') {
+            alert('Login exitoso');
+            window.location.href = "admin.html"; // Redirige al administrador
+            return; // Detiene la ejecución de la función
+        }
+
     try {
         // Consultar la colección "usuario" para verificar que email y password existen y coincidan.
         const userQuery = query(collection(db, "usuario"), where("email", "==", email), where("password", "==", password));
