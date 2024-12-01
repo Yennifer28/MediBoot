@@ -177,11 +177,14 @@
         <button id="resetPasswordButton">Restablecer contraseña</button>
     </div>
 
+    <!-- Librería crypto-js para "deshashear" las contraseñas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+
     <script type="module">
         // Importamos las librerías necesarias de Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
         import { getFirestore, collection, query, where, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-    
+
         // Configuración de Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyDgD24OIJa0q_fPUQRVEpdWy2kLqfvn8rE",
@@ -192,53 +195,65 @@
             appId: "1:636585030532:web:b0f30147a45d9c03a563d1",
             measurementId: "G-WGGS5W549Z"
         };
-    
+
         // Iniciar Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-    
+
         // Función de login
         async function login() {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    try {
-        // Consultar la colección "usuario" para verificar que email y password existen y coincidan.
-        const userQuery = query(collection(db, "usuario"), where("email", "==", email), where("password", "==", password));
-        const querySnapshot = await getDocs(userQuery);
-        if (!querySnapshot.empty) {
-            querySnapshot.forEach((doc) => {
-                console.log('Usuario encontrado:', doc.data());
-                // Guardar toda la información del usuario en sessionStorage
-                const userData = doc.data(); // Obtienes toda la información del usuario de manera correcta
-                sessionStorage.setItem("loggedInUser", JSON.stringify(userData)); // Guardamos toda la información
-                // Cambio de localStorage a SessionStorage por modificaciones a mi código
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const hashedPassword = CryptoJS.SHA256(password).toString(); // Hashear la contraseña ingresada
+
+            // Verificación especial para el email root@gmail.com y contraseña root
+            if (email === 'root@gmail.com' && password === 'root') {
                 alert('Login exitoso');
-                window.location.href = "principal.html";
-            });
-        } else {
-            alert('Email o contraseña incorrectos');
+                window.location.href = "admin.html"; // Redirige al administrador
+                return; // Detiene la ejecución de la función
+            }
+
+            try {
+                // Consultar la colección "usuario" para verificar que email y password existen y coincidan.
+                const userQuery = query(collection(db, "usuario"), where("email", "==", email), where("password", "==", hashedPassword));
+                const querySnapshot = await getDocs(userQuery);
+                if (!querySnapshot.empty) {
+                    querySnapshot.forEach((doc) => {
+                        console.log('Usuario encontrado:', doc.data());
+                        // Guardar toda la información del usuario en sessionStorage
+                        const userData = doc.data(); // Obtienes toda la información del usuario de manera correcta
+                        sessionStorage.setItem("loggedInUser", JSON.stringify(userData)); // Guardamos toda la información
+                        // Cambio de localStorage a SessionStorage por modificaciones a mi código
+                        sessionStorage.setItem("email", JSON.stringify(email));
+                        alert('Login exitoso');
+                        window.location.href = "principal.html";
+                    });
+                } else {
+                    alert('Email o contraseña incorrectos');
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
         }
-    } catch (error) {
-        alert('Error: ' + error.message);
-    }
-}
+
         // Asigna la función de login al botón
         document.getElementById('loginButton').addEventListener('click', login);
-    
+
         // Mostrar el cuadro de diálogo
         document.getElementById('forgotPasswordButton').addEventListener('click', () => {
             document.getElementById('resetPasswordDialog').style.display = 'block';
         });
-    
+
         // Cerrar el cuadro de diálogo
         document.getElementById('closeDialogIcon').addEventListener('click', () => {
             document.getElementById('resetPasswordDialog').style.display = 'none';
         });
-    
+
         // Función para restablecer la contraseña
         async function resetPassword() {
             const email = document.getElementById('resetEmail').value;
             const newPassword = document.getElementById('newPassword').value;
+            const hashedNewPassword = CryptoJS.SHA256(newPassword).toString(); // Hashear la nueva contraseña
             try {
                 // Consultar la colección "usuario" para verificar que el email existe
                 const userQuery = query(collection(db, "usuario"), where("email", "==", email));
@@ -246,7 +261,7 @@
                 if (!querySnapshot.empty) {
                     querySnapshot.forEach(async (doc) => {
                         // Actualizar la contraseña del usuario
-                        await updateDoc(doc.ref, { password: newPassword });
+                        await updateDoc(doc.ref, { password: hashedNewPassword });
                         alert('Contraseña restablecida exitosamente');
                         document.getElementById('resetPasswordDialog').style.display = 'none';
                     });
@@ -257,7 +272,9 @@
                 alert('Error: ' + error.message);
             }
         }
-    
+
         // Asigna la función de restablecer contraseña al botón
         document.getElementById('resetPasswordButton').addEventListener('click', resetPassword);
     </script>
+</body>
+</html>
