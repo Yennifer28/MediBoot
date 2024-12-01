@@ -344,17 +344,43 @@ function generarPDF(historialMedicamentos) {
   const { jsPDF } = window.jspdf;
   const pdf = new jsPDF();
 
-  // Configurar el título
+  // Cargar la imagen de fondo
+  const imgUrl = 'receta.png'; // Cambia esto por la ruta de tu imagen PNG
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const pageHeight = pdf.internal.pageSize.getHeight();
+
+   // Agregar imagen al fondo
+  pdf.addImage(imgUrl, 'receta.png', 0, 0, pageWidth, pageHeight);
+  // Agregar imagen de fondo
+  pdf.addImage(imgUrl, "PNG", 0, 0, pageWidth, pageHeight);
+
   pdf.setFontSize(18);
-  pdf.text("Historial de Medicamentos", 10, 10);
+  
+  const title = "Historial de Medicamentos";
+  const textWidth = pdf.getTextWidth(title);
+  pdf.text(title, (pageWidth - textWidth) / 2, 40); // Centrando el título
+
+  const fechaActual = new Date();
+  const fechaTexto = `${fechaActual.toLocaleDateString()} ${fechaActual.toLocaleTimeString()}`;
+
+    // Agregar el usuario (email) debajo del título
+  pdf.setFontSize(14);
+  pdf.setTextColor(0, 0, 0); 
+  const userText = `Usuario: ${email}`;
+  const userTextWidth = pdf.getTextWidth(userText);
+  pdf.text(userText, (pageWidth - userTextWidth) / 2, 50); // Posición debajo del título
+
+    // Agregar la fecha debajo del usuario
+  pdf.setFontSize(12); // Tamaño de letra para la fecha
+  pdf.setTextColor(0, 0, 0); 
+  const fechaWidth = pdf.getTextWidth(fechaTexto); // Ancho del texto de la fecha
+  pdf.text(fechaTexto, (pageWidth - fechaWidth) / 2, 55); // Centrada en la posición Y=40
 
   // Configurar contenido
   pdf.setFontSize(12);
-  let y = 20;
-
+  let y = 60;
+  
   historialMedicamentos.forEach((medicamento, index) => {
-    pdf.text(`Email ${index + 1}:`, 10, y);
-    y += 10;
     pdf.text(`Medicamento ${index + 1}:`, 10, y);
     y += 10;
     pdf.text(`Nombre: ${medicamento.nombre}`, 10, y);
