@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mediboot</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos para el cuerpo y el contenedor del login */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f0f0f0 0%, #d9e4f5 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-container {
+            display: flex;
+            width: 900px;
+            height: 500px;
+            background-color: #fff;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .illustration-section {
+            width: 50%;
+            background: linear-gradient(135deg, #55aed3 0%, #005f99 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .illustration-section img {
+            max-width: 80%;
+            height: auto;
+        }
+        .login-section {
+            width: 50%;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #f9f9f9;
+        }
+        .login-section h2 {
+            color: #005f99;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 24px;
+        }
+        .login-section input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.3s;
+        }
+        .login-section input:focus {
+            border-color: #55aed3;
+            outline: none;
+        }
+        .login-section button {
+            width: 100%;
+            padding: 15px;
+            background-color: #55aed3;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 16px;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .login-section button:hover {
+            background-color: #469bb3;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .login-section a {
+            color: #005f99;
+            margin-top: 15px;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        .login-section a:hover {
+            text-decoration: underline;
+        }
+        #resetPasswordDialog {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            z-index: 1000;
+            display: none;
+            width: 400px;
+            text-align: center;
+        }
+        #resetPasswordDialog h2 {
+            color: #005f99;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+        #resetPasswordDialog input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.3s;
+        }
+        #resetPasswordDialog input:focus {
+            border-color: #55aed3;
+            outline: none;
+        }
+        #resetPasswordDialog button {
+            width: 100%;
+            padding: 10px;
+            background-color: #55aed3;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 16px;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        #resetPasswordDialog button:hover {
+            background-color: #469bb3;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        #closeDialogIcon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="illustration-section">
+            <img src="https://i.postimg.cc/bNm2wvtc/medi-1.png" alt="Ilustración">
+        </div>
+        <div class="login-section">
+            <h2>¡Bienvenido a Mediboot!</h2>
+            <input type="email" id="email" placeholder="Correo electrónico">
+            <input type="password" id="password" placeholder="Contraseña">
+            <button id="loginButton">Iniciar sesión</button>
+            <button id="forgotPasswordButton">¿Olvidaste tu contraseña?</button>
+            <a href="registrar.html">¿Todavía no tienes una cuenta? Regístrate</a>
+        </div>
+    </div>
+
+    <!-- Cuadro de diálogo para restablecer la contraseña -->
+    <div id="resetPasswordDialog">
+        <img id="closeDialogIcon" src="https://i.postimg.cc/dtSRNdst/5244832.png" alt="Cerrar" style="position: absolute; top: 10px; right: 10px; width: 40px; height: 40px; cursor: pointer;">
+        <h2>Restablecer contraseña</h2>
+        <input type="email" id="resetEmail" placeholder="Correo electrónico">
+        <input type="password" id="newPassword" placeholder="Nueva contraseña">
+        <button id="resetPasswordButton">Restablecer contraseña</button>
+    </div>
+
+    <!-- Librería crypto-js para "deshashear" las contraseñas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+
+    <script type="module">
+        // Importamos las librerías necesarias de Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getFirestore, collection, query, where, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDgD24OIJa0q_fPUQRVEpdWy2kLqfvn8rE",
+            authDomain: "mediboot-d6d85.firebaseapp.com",
+            projectId: "mediboot-d6d85",
+            storageBucket: "mediboot-d6d85.firebasestorage.app",
+            messagingSenderId: "636585030532",
+            appId: "1:636585030532:web:b0f30147a45d9c03a563d1",
+            measurementId: "G-WGGS5W549Z"
+        };
+
+        // Iniciar Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Función de login
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const hashedPassword = CryptoJS.SHA256(password).toString(); // Hashear la contraseña ingresada
+
+            // Verificación especial para el email root@gmail.com y contraseña root
+            if (email === 'root@gmail.com' && password === 'root') {
+                alert('Login exitoso');
+                window.location.href = "admin.html"; // Redirige al administrador
+                return; // Detiene la ejecución de la función
+            }
+
+            try {
+                // Consultar la colección "usuario" para verificar que email y password existen y coincidan.
+                const userQuery = query(collection(db, "usuario"), where("email", "==", email), where("password", "==", hashedPassword));
+                const querySnapshot = await getDocs(userQuery);
+                if (!querySnapshot.empty) {
+                    querySnapshot.forEach((doc) => {
+                        console.log('Usuario encontrado:', doc.data());
+                        // Guardar toda la información del usuario en sessionStorage
+                        const userData = doc.data(); // Obtienes toda la información del usuario de manera correcta
+                        sessionStorage.setItem("loggedInUser", JSON.stringify(userData)); // Guardamos toda la información
+                        // Cambio de localStorage a SessionStorage por modificaciones a mi código
+                        sessionStorage.setItem("email", JSON.stringify(email));
+                        alert('Login exitoso');
+                        window.location.href = "principal.html";
+                    });
+                } else {
+                    alert('Email o contraseña incorrectos');
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        // Asigna la función de login al botón
+        document.getElementById('loginButton').addEventListener('click', login);
+
+        // Mostrar el cuadro de diálogo
+        document.getElementById('forgotPasswordButton').addEventListener('click', () => {
+            document.getElementById('resetPasswordDialog').style.display = 'block';
+        });
+
+        // Cerrar el cuadro de diálogo
+        document.getElementById('closeDialogIcon').addEventListener('click', () => {
+            document.getElementById('resetPasswordDialog').style.display = 'none';
+        });
+
+        // Función para restablecer la contraseña
+        async function resetPassword() {
+            const email = document.getElementById('resetEmail').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const hashedNewPassword = CryptoJS.SHA256(newPassword).toString(); // Hashear la nueva contraseña
+            try {
+                // Consultar la colección "usuario" para verificar que el email existe
+                const userQuery = query(collection(db, "usuario"), where("email", "==", email));
+                const querySnapshot = await getDocs(userQuery);
+                if (!querySnapshot.empty) {
+                    querySnapshot.forEach(async (doc) => {
+                        // Actualizar la contraseña del usuario
+                        await updateDoc(doc.ref, { password: hashedNewPassword });
+                        alert('Contraseña restablecida exitosamente');
+                        document.getElementById('resetPasswordDialog').style.display = 'none';
+                    });
+                } else {
+                    alert('Correo electrónico no encontrado');
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        // Asigna la función de restablecer contraseña al botón
+        document.getElementById('resetPasswordButton').addEventListener('click', resetPassword);
+    </script>
+</body>
+</html>
