@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+    
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -156,6 +157,7 @@
        <div class="modal-content">
            <span class="close" id="closeModal">&times;</span>
            <h2>¡Usuario registrado exitosamente!</h2>
+           <button id="goToLoginButton">Ir a Iniciar Sesión</button>
        </div>
    </div>
 
@@ -245,6 +247,11 @@
            const hashArray = Array.from(new Uint8Array(hashBuffer));
            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
        }
+
+       document.getElementById('goToLoginButton').addEventListener('click', function() {
+    window.location.href = 'login.html'; // Cambia esta ruta por la correcta
+});
+
    </script>
 </body>
 </html>
